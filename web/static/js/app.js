@@ -366,6 +366,82 @@
     };
   }
 
+  // ── Browser Speech Synthesis (JARVIS Voice) ───────────────────────────────
+  let browserVoices = [];
+
+  function loadBrowserVoices() {
+    if ('speechSynthesis' in window) {
+      browserVoices = window.speechSynthesis.getVoices() || [];
+    }
+  }
+
+  if ('speechSynthesis' in window) {
+    loadBrowserVoices();
+    window.speechSynthesis.onvoiceschanged = loadBrowserVoices;
+  }
+
+  function speakInBrowser(text) {
+    if (!state.voiceEnabled || !('speechSynthesis' in window) || !text || !text.trim()) {
+      return;
+    }
+
+    try {
+      window.speechSynthesis.cancel(); // Cancel any overlapping speech
+
+      // Clean up markdown / URLs for natural speech
+      const cleanText = text
+        .replace(/[*_#`~[\]()<>]/g, ' ')
+        .replace(/https?:\/\/\S+/g, 'link')
+        .replace(/\s+/g, ' ')
+        .trim();
+
+      if (!cleanText) return;
+
+      const utterance = new SpeechSynthesisUtterance(cleanText);
+      const isFemale = (state.telemetry.persona === 'FRIDAY' || state.telemetry.voice_gender === 'female');
+
+      if (browserVoices.length === 0) {
+        browserVoices = window.speechSynthesis.getVoices() || [];
+      }
+
+      let selectedVoice = null;
+      if (isFemale) {
+        selectedVoice = browserVoices.find(v => 
+          (v.name.includes('Female') || v.name.includes('Zira') || v.name.includes('Samantha') || v.name.includes('Victoria') || v.name.includes('Google UK English Female')) && v.lang.startsWith('en')
+        ) || browserVoices.find(v => v.lang.startsWith('en'));
+      } else {
+        selectedVoice = browserVoices.find(v => 
+          (v.name.includes('UK English Male') || v.name.includes('George') || v.name.includes('David') || v.name.includes('Daniel') || v.name.includes('Oliver') || v.name.includes('Male')) && v.lang.startsWith('en')
+        ) || browserVoices.find(v => v.lang.includes('GB') || v.lang.includes('en-GB')) || browserVoices.find(v => v.lang.startsWith('en'));
+      }
+
+      if (selectedVoice) {
+        utterance.voice = selectedVoice;
+      }
+
+      utterance.rate = (state.telemetry && state.telemetry.speech_rate) ? Math.min(1.4, Math.max(0.8, state.telemetry.speech_rate / 180)) : 1.0;
+      utterance.pitch = isFemale ? 1.05 : 0.95;
+      utterance.volume = (state.telemetry && state.telemetry.speech_volume !== undefined) ? state.telemetry.speech_volume : 1.0;
+
+      utterance.onstart = () => {
+        setAssistantState('SPEAKING');
+      };
+
+      utterance.onend = () => {
+        setAssistantState('IDLE');
+      };
+
+      utterance.onerror = () => {
+        setAssistantState('IDLE');
+      };
+
+      window.speechSynthesis.speak(utterance);
+    } catch (err) {
+      console.warn('Speech synthesis error:', err);
+      setAssistantState('IDLE');
+    }
+  }
+
   function handleServerMessage(msg) {
     switch (msg.type) {
       case 'init':
@@ -387,6 +463,7 @@
       case 'command_result':
         appendMessage('user', msg.query, 'COMMAND');
         appendMessage('assistant', msg.result.text, (msg.result.category || 'SYSTEM').toUpperCase());
+        speakInBrowser(msg.result.spoken || msg.result.text);
         break;
     }
   }
@@ -487,7 +564,7 @@
         const data = await resp.json();
         appendMessage('user', cleanQuery, 'COMMAND');
         appendMessage('assistant', data.result.text, (data.result.category || 'SYSTEM').toUpperCase());
-        setAssistantState('IDLE');
+        speakInBrowser(data.result.spoken || data.result.text);
       } catch (err) {
         console.error('Command API error:', err);
         appendMessage('assistant', 'Communication link failure, Sir.', 'ERROR');
@@ -751,7 +828,14 @@
   if (dom.btnVoiceToggle) {
     dom.btnVoiceToggle.addEventListener('click', () => {
       state.voiceEnabled = !state.voiceEnabled;
-      dom.btnVoiceToggle.style.color = state.voiceEnabled ? 'var(--cyan-core)' : 'var(--text-muted)';
+      if (!state.voiceEnabled && 'speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        setAssistantState('IDLE');
+      }
+      dom.btnVoiceToggle.style.opacity = state.voiceEnabled ? '1' : '0.45';
+      if (state.voiceEnabled) {
+        speakInBrowser('Audio feedback enabled, Sir.');
+      }
       fetch('/api/config', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -759,6 +843,22 @@
       });
     });
   }
+
+  // ── Prime browser speech on first user gesture ─────────────────────────────
+  const primeAudio = () => {
+    if ('speechSynthesis' in window) {
+      loadBrowserVoices();
+      const silent = new SpeechSynthesisUtterance('');
+      silent.volume = 0;
+      window.speechSynthesis.speak(silent);
+    }
+    window.removeEventListener('click', primeAudio);
+    window.removeEventListener('keydown', primeAudio);
+    window.removeEventListener('touchstart', primeAudio);
+  };
+  window.addEventListener('click', primeAudio, { once: true });
+  window.addEventListener('keydown', primeAudio, { once: true });
+  window.addEventListener('touchstart', primeAudio, { once: true });
 
   // ── Input & Chip Event Listeners ───────────────────────────────────────────
   if (dom.btnSend) {
