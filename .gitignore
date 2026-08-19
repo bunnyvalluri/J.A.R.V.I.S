@@ -120,6 +120,7 @@ venv.bak/
 logs/
 *.log
 notes.json
+data/notes.json
 
 # Spyder project settings
 .spyderproject

@@ -1,3 +1,8 @@
+"""
+weather_service.py — Geolocation & Weather Forecasting Service
+===============================================================
+"""
+
 import requests
 import geocoder
 
@@ -25,10 +30,10 @@ WMO_CODE_MAP = {
     99: "Thunderstorm with heavy hail"
 }
 
+
 def get_location():
     """Detect current location coordinates and city name."""
     try:
-        # First try ip-api (very fast and includes city/country)
         resp = requests.get("http://ip-api.com/json/", timeout=3)
         if resp.status_code == 200:
             data = resp.json()
@@ -56,11 +61,9 @@ def get_location():
 
     return {"lat": 28.6139, "lon": 77.2090, "city": "Current Location", "country": ""}
 
+
 def get_weather(city_name=None):
-    """
-    Fetch current real-time weather using Open-Meteo API.
-    Returns a dict with temperature, condition, humidity, wind speed, and location.
-    """
+    """Fetch current real-time weather using Open-Meteo API."""
     loc = get_location()
     lat = loc["lat"]
     lon = loc["lon"]
@@ -91,7 +94,7 @@ def get_weather(city_name=None):
                 "spoken": spoken_summary,
                 "display": display_summary
             }
-    except Exception as e:
+    except Exception:
         pass
 
     # Fallback to wttr.in
@@ -113,8 +116,3 @@ def get_weather(city_name=None):
         "spoken": "I am currently unable to retrieve weather data.",
         "display": "Weather service unavailable"
     }
-
-if __name__ == "__main__":
-    w = get_weather()
-    print("Spoken:", w["spoken"])
-    print("Display:", w["display"])

@@ -1,49 +1,40 @@
 # ─────────────────────────────────────────────────────────────────────────────
 # J.A.R.V.I.S. — Production Requirements
-# Python 3.9+ recommended
-# Last updated: 2026-08-19
+# Python 3.9+ recommended (Compatible with Python 3.10 - 3.13)
 # ─────────────────────────────────────────────────────────────────────────────
 
 # ── Core AI & Language ────────────────────────────────────────────────────────
-google-generativeai>=0.8.0       # Gemini 2.0 Flash LLM brain
-wikipedia>=1.4.0                 # Wikipedia summaries
+google-genai>=0.1.0               # Official Google GenAI SDK for Gemini
+google-generativeai>=0.8.0       # Fallback LLM client
+wikipedia>=1.4.0                 # Wikipedia search & summaries
+
+# ── Web Application & Realtime Telemetry ──────────────────────────────────────
+fastapi>=0.110.0                 # High-performance async REST & WebSocket framework
+uvicorn>=0.28.0                  # Lightning-fast ASGI production web server
+websockets>=12.0                 # Real-time WebSocket protocol support
+pydantic>=2.6.0                  # Data validation and settings management
 
 # ── Environment & Configuration ───────────────────────────────────────────────
 python-dotenv>=1.0.0             # .env file loading
 
 # ── Voice & Audio ─────────────────────────────────────────────────────────────
-pyttsx3>=2.90                    # Offline text-to-speech
-SpeechRecognition>=3.10.0        # Voice recognition via Google API
-PyAudio>=0.2.13                  # Microphone access (see install note below)
+pyttsx3>=2.90                    # Offline text-to-speech engine
+SpeechRecognition>=3.10.0        # Speech recognition engine
+PyAudio>=0.2.13                  # Microphone hardware audio capture
 
-# ── System & Hardware ─────────────────────────────────────────────────────────
+# ── System & Hardware Diagnostics ─────────────────────────────────────────────
 psutil>=5.9.0                    # CPU, RAM, battery, disk telemetry
-PyAutoGUI>=0.9.54                # Screenshot capture, volume control
-pywin32>=306                     # Windows OS integration
-pypiwin32>=223                   # Windows COM support
+PyAutoGUI>=0.9.54                # Screenshot capture & volume controls
+pywin32>=306                     # Windows OS COM integration
+pypiwin32>=223                   # Windows native support
 
-# ── Network & Web ─────────────────────────────────────────────────────────────
-requests>=2.31.0                 # HTTP client for weather & location APIs
+# ── Network & Services ────────────────────────────────────────────────────────
+requests>=2.31.0                 # HTTP transport client for APIs
 feedparser>=6.0.8                # RSS news feed parser
-geocoder>=1.38.1                 # IP-based geolocation fallback
+geocoder>=1.38.1                 # IP-based geolocation
 beautifulsoup4>=4.12.0           # HTML parsing
-urllib3>=2.0.0                   # HTTP transport layer
 
 # ── Terminal & Display ────────────────────────────────────────────────────────
-colorama>=0.4.6                  # Cross-platform terminal color support
-
-# ── Utility ───────────────────────────────────────────────────────────────────
-pyjokes>=0.6.0                   # Programmer jokes
-Pillow>=10.0.0                   # Image handling (screenshots)
-
-# ─────────────────────────────────────────────────────────────────────────────
-# Installation Notes:
-#
-# PyAudio on Windows — use one of:
-#   pip install pipwin && pipwin install pyaudio
-#   pip install PyAudio-0.2.11-cp38-cp38-win_amd64.whl  (included in repo)
-#
-# PyAudio on Linux:
-#   sudo apt-get install portaudio19-dev libasound-dev
-#   pip install pyaudio
-# ─────────────────────────────────────────────────────────────────────────────
+colorama>=0.4.6                  # ANSI terminal styling & colors
+pyjokes>=0.6.0                   # Offline developer humor
+Pillow>=10.0.0                   # Image handling and screenshots

@@ -1,3 +1,8 @@
+"""
+system_control.py — Hardware Diagnostics & OS Automation
+==========================================================
+"""
+
 import os
 import sys
 import ctypes
@@ -5,13 +10,20 @@ import datetime
 import psutil
 import pyautogui
 from pathlib import Path
+
+# Ensure src in sys.path
+SRC_DIR = Path(__file__).resolve().parent.parent
+if str(SRC_DIR) not in sys.path:
+    sys.path.insert(0, str(SRC_DIR))
+
 from config import SCREENSHOTS_DIR
 from ui import print_status, print_info, SUCCESS, WARNING, PRIMARY
 from logger import log
 
+
 def get_system_stats():
     """Fetch real-time CPU, RAM, Disk, and Battery diagnostics."""
-    cpu = psutil.cpu_percent(interval=0.1)
+    cpu = psutil.cpu_percent(interval=None)
     ram = psutil.virtual_memory()
     disk = psutil.disk_usage('/')
     battery = psutil.sensors_battery()
@@ -30,6 +42,7 @@ def get_system_stats():
     }
     return spoken, display
 
+
 def take_screenshot():
     """Take a screenshot and save it to the Pictures/JARVIS_Screenshots directory."""
     try:
@@ -43,6 +56,7 @@ def take_screenshot():
         return f"Screenshot captured successfully and saved to your Pictures folder, Sir."
     except Exception as e:
         return f"Failed to capture screenshot: {e}"
+
 
 def change_volume(action="up"):
     """Control system audio volume via media keys."""
@@ -61,6 +75,7 @@ def change_volume(action="up"):
     except Exception as e:
         return f"Unable to adjust volume: {e}"
 
+
 def lock_screen():
     """Lock the Windows workstation."""
     try:
@@ -69,12 +84,14 @@ def lock_screen():
     except Exception as e:
         return f"Failed to lock screen: {e}"
 
+
 def get_time_and_date():
     """Get current time, date, and day."""
     now = datetime.datetime.now()
     time_str = now.strftime("%I:%M %p")
     date_str = now.strftime("%A, %B %d, %Y")
     return f"Sir, it is currently {time_str} on {date_str}."
+
 
 def get_network_info():
     """Get basic network connection info."""

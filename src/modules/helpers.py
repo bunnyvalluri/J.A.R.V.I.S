@@ -5,6 +5,7 @@ Command capture (voice + text), persistent notes (JSON with timestamps),
 dictionary lookup, jokes, and system shortcuts.
 """
 
+import sys
 import json
 import datetime
 import pyjokes
@@ -12,9 +13,14 @@ import speech_recognition as sr
 from difflib import get_close_matches
 from pathlib import Path
 
-from voice_engine import speak, voice
-from weather_service import get_weather
-from system_control import get_system_stats, take_screenshot, change_volume, lock_screen, get_time_and_date
+# Ensure src in sys.path
+SRC_DIR = Path(__file__).resolve().parent.parent
+if str(SRC_DIR) not in sys.path:
+    sys.path.insert(0, str(SRC_DIR))
+
+from core.voice_engine import speak, voice
+from services.weather_service import get_weather
+from services.system_control import get_system_stats, take_screenshot, change_volume, lock_screen, get_time_and_date
 from config import DATA_FILE, NOTES_FILE, NOTES_FILE_LEGACY
 from ui import (
     print_listening, print_recognizing, print_user_input,
@@ -29,14 +35,13 @@ try:
     log.info(f"Dictionary loaded: {len(_word_data)} entries.")
 except Exception as _e:
     _word_data = {}
-    log.warning(f"Dictionary not loaded: {_e}")
+    log.warning(f"Dictionary not loaded from {DATA_FILE}: {_e}")
 
 
 # ── Notes helpers ──────────────────────────────────────────────────────────────
 
 def _load_notes() -> list:
-    """Load notes from JSON file. Migrates legacy .txt on first run."""
-    # One-time migration from old data.txt
+    """Load notes from JSON file in data/ directory."""
     if not NOTES_FILE.exists() and NOTES_FILE_LEGACY.exists():
         try:
             with open(NOTES_FILE_LEGACY, "r", encoding="utf-8") as f:
@@ -66,7 +71,7 @@ def _load_notes() -> list:
 
 
 def _save_notes(notes: list) -> bool:
-    """Persist notes list to JSON."""
+    """Persist notes list to data/notes.json."""
     try:
         with open(NOTES_FILE, "w", encoding="utf-8") as f:
             json.dump(notes, f, indent=2, ensure_ascii=False)
@@ -143,33 +148,11 @@ def joke() -> str:
         return "Why do programmers prefer dark mode? Because light attracts bugs!"
 
 
-# ── System shortcuts ───────────────────────────────────────────────────────────
-
-def cpu() -> str:
-    spoken, _ = get_system_stats()
-    return spoken
-
-
-def screenshot() -> str:
-    return take_screenshot()
-
-
-def weather() -> str:
-    w = get_weather()
-    return w.get("spoken", "Weather data is currently unavailable.")
-
-
 # ── Command Capture ────────────────────────────────────────────────────────────
 
 def takeCommand(mode: str = "hybrid") -> str:
     """
     Capture user command via voice recognition and/or text input.
-
-    Args:
-        mode: 'hybrid' | 'text' | 'voice'
-
-    Returns:
-        Stripped user query string, or empty string on no input.
     """
     if mode == "text":
         try:
@@ -182,7 +165,7 @@ def takeCommand(mode: str = "hybrid") -> str:
             raise
         return ""
 
-    # ── Voice branch ───────────────────────────────────────────────────────────
+    # Voice branch
     r = sr.Recognizer()
     r.dynamic_energy_threshold = True
     r.pause_threshold = 0.85
@@ -191,7 +174,7 @@ def takeCommand(mode: str = "hybrid") -> str:
     try:
         with sr.Microphone() as source:
             print_listening()
-            r.adjust_for_ambient_noise(source, duration=0.5)
+            r.adjust_for_ambient_noise(source, duration=0.4)
             audio = r.listen(source, timeout=4, phrase_time_limit=8)
 
         print_recognizing()
@@ -210,7 +193,7 @@ def takeCommand(mode: str = "hybrid") -> str:
     except Exception as exc:
         log.warning(f"Microphone error: {exc}")
 
-    # ── Hybrid text fallback ───────────────────────────────────────────────────
+    # Hybrid text fallback
     if mode == "hybrid":
         try:
             user_input = input("\n  [Type Command] > ").strip()

@@ -1,10 +1,22 @@
+"""
+app_launcher.py — Desktop App & URL Launcher
+=============================================
+"""
+
 import os
 import sys
 import subprocess
 import webbrowser
 import urllib.parse
 from pathlib import Path
+
+# Ensure src in sys.path
+SRC_DIR = Path(__file__).resolve().parent.parent
+if str(SRC_DIR) not in sys.path:
+    sys.path.insert(0, str(SRC_DIR))
+
 from ui import print_status, print_info, print_error, SUCCESS, PRIMARY, WARNING
+
 
 def open_url(url):
     """Open a URL in the user's default web browser."""
@@ -15,10 +27,10 @@ def open_url(url):
         print_error(f"Failed to open URL {url}: {e}")
         return False
 
+
 def open_whatsapp():
     """Open WhatsApp Desktop app or fallback to WhatsApp Web."""
     try:
-        # Try Windows URI protocol for WhatsApp Desktop
         os.system("start whatsapp:")
         print_status("LAUNCHER", "Opening WhatsApp Application...", SUCCESS)
         return "Opening WhatsApp for you, Sir."
@@ -26,6 +38,7 @@ def open_whatsapp():
         pass
     open_url("https://web.whatsapp.com")
     return "Opening WhatsApp Web in your browser, Sir."
+
 
 def open_vscode():
     """Open Visual Studio Code dynamically."""
@@ -37,7 +50,6 @@ def open_vscode():
     except Exception:
         pass
 
-    # Check common paths in user profile and program files
     user_home = Path.home()
     possible_paths = [
         user_home / "AppData" / "Local" / "Programs" / "Microsoft VS Code" / "Code.exe",
@@ -51,6 +63,7 @@ def open_vscode():
 
     return "VS Code executable not found on standard paths, Sir."
 
+
 def open_spotify():
     """Open Spotify application or web player."""
     try:
@@ -60,6 +73,7 @@ def open_spotify():
         open_url("https://open.spotify.com")
         return "Opening Spotify Web Player, Sir."
 
+
 def open_calculator():
     """Launch Windows Calculator."""
     try:
@@ -67,6 +81,7 @@ def open_calculator():
         return "Opening Calculator, Sir."
     except Exception as e:
         return f"Unable to open Calculator: {e}"
+
 
 def open_notepad():
     """Launch Notepad."""
@@ -76,6 +91,7 @@ def open_notepad():
     except Exception as e:
         return f"Unable to open Notepad: {e}"
 
+
 def open_terminal():
     """Launch Windows Terminal / PowerShell."""
     try:
@@ -83,6 +99,7 @@ def open_terminal():
         return "Opening PowerShell Terminal, Sir."
     except Exception as e:
         return f"Unable to open Terminal: {e}"
+
 
 def open_file_explorer(path=None):
     """Open Windows File Explorer."""
@@ -95,6 +112,7 @@ def open_file_explorer(path=None):
     except Exception as e:
         return f"Unable to open File Explorer: {e}"
 
+
 def open_task_manager():
     """Launch Task Manager."""
     try:
@@ -103,12 +121,14 @@ def open_task_manager():
     except Exception as e:
         return f"Unable to open Task Manager: {e}"
 
+
 def search_youtube(query):
     """Search YouTube for a specific query."""
     q = urllib.parse.quote_plus(query)
     url = f"https://www.youtube.com/results?search_query={q}"
     open_url(url)
     return f"Searching YouTube for '{query}', Sir."
+
 
 def search_google(query):
     """Search Google for a specific query."""
@@ -117,13 +137,11 @@ def search_google(query):
     open_url(url)
     return f"Here is what I found on Google for '{query}', Sir."
 
+
 def open_custom_website_or_app(target):
-    """
-    Intelligent launcher matching common aliases and generic web URLs.
-    """
+    """Intelligent launcher matching common aliases and generic web URLs."""
     target = target.lower().strip()
     
-    # Common Quick-Launch Map
     APP_MAP = {
         "youtube": ("https://youtube.com", "Opening YouTube, Sir."),
         "google": ("https://google.com", "Opening Google, Sir."),
@@ -163,11 +181,9 @@ def open_custom_website_or_app(target):
     elif "task manager" in target or "taskmgr" in target:
         return open_task_manager()
 
-    # Try generic URL or fallback to Google search
     if "." in target:
         url = target if target.startswith("http") else f"https://{target}"
         open_url(url)
         return f"Opening {target}, Sir."
 
-    # Fallback to search
     return search_google(target)
