@@ -945,23 +945,34 @@
     });
   }
 
-  // ── Voice Mute Quick Toggle ────────────────────────────────────────────────
+  // ── Voice Speak & Greeting Button ─────────────────────────────────────────
   if (dom.btnVoiceToggle) {
-    dom.btnVoiceToggle.addEventListener('click', () => {
-      state.voiceEnabled = !state.voiceEnabled;
-      if (!state.voiceEnabled && 'speechSynthesis' in window) {
-        window.speechSynthesis.cancel();
-        setAssistantState('IDLE');
-      }
-      dom.btnVoiceToggle.style.opacity = state.voiceEnabled ? '1' : '0.45';
-      if (state.voiceEnabled) {
-        speakInBrowser('Audio feedback enabled, Sir.');
-      }
+    dom.btnVoiceToggle.addEventListener('click', (e) => {
+      e.preventDefault();
+      loadBrowserVoices();
+      state.voiceEnabled = true;
+      dom.btnVoiceToggle.style.opacity = '1';
+      dom.btnVoiceToggle.classList.add('active');
+
+      const isFriday = state.telemetry && state.telemetry.persona === 'FRIDAY';
+      const userName = (state.telemetry && state.telemetry.user_name) || 'Sir';
+
+      const spokenGreeting = isFriday
+        ? `Hello, ${userName}. My name is FRIDAY. All systems are initialized and fully operational. How may I assist you today?`
+        : `Hello, ${userName}. My name is JARVIS, Just A Rather Very Intelligent System. All systems are initialized and standing by for your command.`;
+
+      const chatGreeting = isFriday
+        ? `Hello, ${userName}. My name is F.R.I.D.A.Y. All diagnostic and intelligence protocols are active and operational. How may I assist you today?`
+        : `Hello, ${userName}. My name is J.A.R.V.I.S. (Just A Rather Very Intelligent System). All systems are initialized and standing by for your command.`;
+
+      appendMessage('assistant', chatGreeting, 'VOICE PROTOCOL');
+      speakInBrowser(spokenGreeting);
+
       fetch('/api/config', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ voice_enabled: state.voiceEnabled })
-      });
+        body: JSON.stringify({ voice_enabled: true })
+      }).catch(() => {});
     });
   }
 
