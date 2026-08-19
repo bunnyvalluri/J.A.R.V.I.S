@@ -976,21 +976,45 @@
     });
   }
 
-  // ── Prime browser speech on first user gesture ─────────────────────────────
-  const primeAudio = () => {
-    if ('speechSynthesis' in window) {
-      loadBrowserVoices();
-      const silent = new SpeechSynthesisUtterance('');
-      silent.volume = 0;
-      window.speechSynthesis.speak(silent);
+  // ── Automatic Opening Spoken Greeting ─────────────────────────────────────
+  let hasSpokenOpeningGreeting = false;
+
+  function triggerInitialGreeting() {
+    if (hasSpokenOpeningGreeting) return;
+    hasSpokenOpeningGreeting = true;
+
+    loadBrowserVoices();
+    state.voiceEnabled = true;
+
+    const isFriday = state.telemetry && state.telemetry.persona === 'FRIDAY';
+    const userName = (state.telemetry && state.telemetry.user_name) || 'Sir';
+
+    const spokenGreeting = isFriday
+      ? `Hello, ${userName}. My name is FRIDAY. All systems are initialized and fully operational. How may I assist you today?`
+      : `Hello, ${userName}. My name is JARVIS, Just A Rather Very Intelligent System. All systems are initialized and standing by for your command.`;
+
+    speakInBrowser(spokenGreeting);
+  }
+
+  // Attempt automatic speech on page load
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      triggerInitialGreeting();
+    }, 600);
+  });
+
+  // Ensure speech triggers on the very first touch/click if blocked by browser autoplay policy
+  const handleFirstUserInteraction = () => {
+    if (!hasSpokenOpeningGreeting) {
+      triggerInitialGreeting();
     }
-    window.removeEventListener('click', primeAudio);
-    window.removeEventListener('keydown', primeAudio);
-    window.removeEventListener('touchstart', primeAudio);
+    window.removeEventListener('click', handleFirstUserInteraction, true);
+    window.removeEventListener('touchstart', handleFirstUserInteraction, true);
+    window.removeEventListener('keydown', handleFirstUserInteraction, true);
   };
-  window.addEventListener('click', primeAudio, { once: true });
-  window.addEventListener('keydown', primeAudio, { once: true });
-  window.addEventListener('touchstart', primeAudio, { once: true });
+  window.addEventListener('click', handleFirstUserInteraction, { capture: true, once: true });
+  window.addEventListener('touchstart', handleFirstUserInteraction, { capture: true, once: true });
+  window.addEventListener('keydown', handleFirstUserInteraction, { capture: true, once: true });
 
   // ── Input & Chip Event Listeners ───────────────────────────────────────────
   if (dom.btnSend) {
