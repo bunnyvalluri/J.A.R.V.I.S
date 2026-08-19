@@ -54,14 +54,13 @@ _SYSTEM_PROMPT = textwrap.dedent("""
 
 _MAX_HISTORY_TURNS = 10
 
-# Candidate models in priority order
+import time
+
+# Candidate models in priority order (official Gemini models)
 _CANDIDATE_MODELS = [
-    "gemini-2.5-flash",
-    "gemini-2.5-flash-lite",
-    "gemini-flash-latest",
-    "gemini-pro-latest",
-    "gemini-3.5-flash",
-    "gemini-3.7-flash",
+    "gemini-2.0-flash",
+    "gemini-1.5-flash",
+    "gemini-1.5-pro",
 ]
 
 _HTTP_HEADERS = {
@@ -84,6 +83,7 @@ class GeminiBrain:
         self._active_model: Optional[str] = None
         self.available: bool = False
         self.last_source: str = "offline"
+        self._quota_cooldown_until: float = 0.0
         self._init_client()
 
     def _init_client(self) -> None:
@@ -119,8 +119,8 @@ class GeminiBrain:
 
         query_clean = query.strip()
 
-        # Attempt LLM query if client is initialized
-        if self.available and self._client:
+        # Attempt LLM query if client is initialized and not in quota cooldown
+        if self.available and self._client and (time.time() >= self._quota_cooldown_until):
             reply = self._query_gemini(query_clean)
             if reply:
                 self.last_source = f"Gemini ({self._active_model or 'AI'})"
@@ -168,6 +168,12 @@ class GeminiBrain:
                     log.warning(f"GeminiBrain: Model {model_name} failed — {err_msg[:120]}")
                     if self._active_model == model_name:
                         self._active_model = None
+
+                    # If quota exhausted (429), fail fast and set cooldown
+                    if "429" in err_msg or "RESOURCE_EXHAUSTED" in err_msg or "quota" in err_msg.lower():
+                        self._quota_cooldown_until = time.time() + 60.0
+                        log.info("GeminiBrain: Quota limit reached; activating 60s fast fallback cooldown.")
+                        break
                     continue
 
         except Exception as exc:
