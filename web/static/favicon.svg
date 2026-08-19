@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="100%" height="100%">
+  <defs>
+    <radialGradient id="coreGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#00f0ff" stop-opacity="1" />
+      <stop offset="40%" stop-color="#0077ff" stop-opacity="0.8" />
+      <stop offset="80%" stop-color="#050811" stop-opacity="0.9" />
+      <stop offset="100%" stop-color="#050811" stop-opacity="1" />
+    </radialGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="3" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Dark Base Circle -->
+  <circle cx="64" cy="64" r="62" fill="#050811" stroke="#00f0ff" stroke-width="2" stroke-opacity="0.4" />
+
+  <!-- Background Glow -->
+  <circle cx="64" cy="64" r="50" fill="url(#coreGlow)" opacity="0.35" />
+
+  <!-- Outer Dashed Energy Ring -->
+  <circle cx="64" cy="64" r="52" fill="none" stroke="#00f0ff" stroke-width="2.5" stroke-dasharray="14 6" filter="url(#glow)" />
+
+  <!-- Middle Segmented Arc Teeth -->
+  <circle cx="64" cy="64" r="40" fill="none" stroke="#00d8ff" stroke-width="3" stroke-dasharray="8 4" opacity="0.9" />
+
+  <!-- Inner Core Ring -->
+  <circle cx="64" cy="64" r="28" fill="#0a142c" stroke="#00f0ff" stroke-width="2" filter="url(#glow)" />
+
+  <!-- Golden Nano Accent Ring -->
+  <circle cx="64" cy="64" r="18" fill="none" stroke="#ffb700" stroke-width="1.5" stroke-dasharray="4 3" opacity="0.85" />
+
+  <!-- Central Arc Reactor Core -->
+  <circle cx="64" cy="64" r="10" fill="#00f0ff" filter="url(#glow)" />
+  <circle cx="64" cy="64" r="5" fill="#ffffff" />
+
+  <!-- Orbiting Energy Nodes -->
+  <circle cx="64" cy="46" r="2.5" fill="#00ff9d" filter="url(#glow)" />
+  <circle cx="48" cy="74" r="2.5" fill="#00ff9d" filter="url(#glow)" />
+  <circle cx="80" cy="74" r="2.5" fill="#00ff9d" filter="url(#glow)" />
+</svg>

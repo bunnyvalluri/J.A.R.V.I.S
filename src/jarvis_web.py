@@ -272,6 +272,14 @@ STATIC_DIR.mkdir(parents=True, exist_ok=True)
 app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 
 
+@app.get("/favicon.ico", include_in_schema=False)
+async def favicon() -> FileResponse:
+    fav_file = STATIC_DIR / "favicon.ico"
+    if fav_file.exists():
+        return FileResponse(str(fav_file))
+    return FileResponse(str(STATIC_DIR / "favicon.png"))
+
+
 @app.get("/")
 async def serve_index() -> FileResponse:
     index_file = WEB_DIR / "index.html"
