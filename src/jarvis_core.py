@@ -17,6 +17,8 @@ from __future__ import annotations
 
 import os
 import sys
+import re
+import json
 import datetime
 import socket
 import psutil
@@ -169,13 +171,13 @@ class JarvisCore:
         r(lambda q: "hybrid mode" in q or "switch to hybrid" in q, self._cmd_mode_hybrid)
 
         # Hardware & System Controls
-        r(lambda q: any(k in q for k in ("system stats", "cpu", "ram", "memory usage", "battery", "hardware")), self._cmd_sysinfo)
+        r(lambda q: bool(re.search(r'\b(system stats|cpu|ram|memory usage|battery status|hardware info)\b', q)), self._cmd_sysinfo)
         r(lambda q: "screenshot" in q or "take screenshot" in q or "capture screen" in q, self._cmd_screenshot)
         r(lambda q: "volume up" in q or "increase volume" in q, self._cmd_vol_up)
         r(lambda q: "volume down" in q or "decrease volume" in q, self._cmd_vol_down)
-        r(lambda q: "mute" in q or "unmute" in q, self._cmd_mute)
+        r(lambda q: bool(re.search(r'\b(mute|unmute)\b', q)) and not any(a in q for a in ("voice", "mic")), self._cmd_mute)
         r(lambda q: "lock screen" in q or "lock workstation" in q or q == "lock pc", self._cmd_lock)
-        r(lambda q: any(k in q for k in ("time", "current time", "date", "today")), self._cmd_time)
+        r(lambda q: bool(re.search(r'\b(current time|what time|what is the time|what date|what day|today date|current date)\b', q)) or q in {"time", "date"}, self._cmd_time)
         r(lambda q: "ip address" in q or "network info" in q or q == "my ip", self._cmd_network)
 
         # App Launchers & Quick Links
@@ -189,13 +191,7 @@ class JarvisCore:
         r(lambda q: "file explorer" in q or q == "open files", self._cmd_explorer)
 
         # Web & Search
-        r(lambda q: q == "open youtube", self._cmd_open_youtube)
-        r(lambda q: q == "open google", self._cmd_open_google)
-        r(lambda q: q == "open github", self._cmd_open_github)
-        r(lambda q: "open chatgpt" in q, self._cmd_open_chatgpt)
-        r(lambda q: "open stackoverflow" in q, self._cmd_open_so)
-        r(lambda q: q == "open amazon", self._cmd_open_amazon)
-        r(lambda q: "play" in q and "youtube" in q, self._cmd_play_youtube)
+        r(lambda q: any(w in q for w in ("play ", "play music", "play song")) and "youtube" in q, self._cmd_play_youtube)
         r(lambda q: q.startswith("search youtube for "), self._cmd_search_youtube)
         r(lambda q: q.startswith("search google for ") or q.startswith("search for "), self._cmd_search_google)
         r(lambda q: q.startswith("google "), self._cmd_google)
@@ -213,8 +209,17 @@ class JarvisCore:
         r(lambda q: q.startswith("define ") or q.startswith("meaning of ") or "dictionary" in q, self._cmd_define)
         r(lambda q: "joke" in q or "tell me a joke" in q, self._cmd_joke)
 
-        # Generic open
-        r(lambda q: q.startswith("open "), self._cmd_open_generic)
+        # Flexible App & Website Launcher
+        r(lambda q: any(q.startswith(p) for p in ("open ", "launch ", "start ", "goto ", "go to ", "browse ")) or
+                    any(q.endswith(s) for s in (" open", " launch", " please")) or
+                    q in {"youtube", "google", "facebook", "fb", "instagram", "insta", "github", "chatgpt", "openai",
+                          "gemini", "claude", "whatsapp", "telegram", "discord", "spotify", "netflix", "prime",
+                          "hotstar", "reddit", "linkedin", "twitter", "x", "gmail", "mail", "drive", "docs",
+                          "sheets", "slides", "maps", "weather", "stackoverflow", "amazon", "wikipedia", "wiki",
+                          "pinterest", "tiktok", "twitch", "canva", "notion", "figma", "bing", "calculator",
+                          "notepad", "camera", "paint", "settings", "terminal", "powershell", "cmd", "explorer",
+                          "task manager", "vscode", "code"},
+          self._cmd_open_generic)
 
     # ── Execution Pipeline ─────────────────────────────────────────────────────
 
@@ -504,28 +509,41 @@ class JarvisCore:
     def _cmd_play_youtube(self, q: str, ql: str) -> CommandResult:
         track = ql.replace("play", "").replace("on youtube", "").replace("youtube", "").strip()
         track = track or "top music"
-        res = search_youtube(track)
-        return CommandResult(success=True, text=res, spoken=res, category="media")
+        res, url = search_youtube(track)
+        data = {"url": url} if url else {}
+        return CommandResult(success=True, text=res, spoken=res, category="media", data=data)
 
     def _cmd_search_youtube(self, q: str, ql: str) -> CommandResult:
         query = ql.replace("search youtube for", "").strip()
-        res = search_youtube(query)
-        return CommandResult(success=True, text=res, spoken=res, category="media")
+        res, url = search_youtube(query)
+        data = {"url": url} if url else {}
+        return CommandResult(success=True, text=res, spoken=res, category="media", data=data)
 
     def _cmd_search_google(self, q: str, ql: str) -> CommandResult:
         query = ql.replace("search google for", "").replace("search for", "").strip()
-        res = search_google(query)
-        return CommandResult(success=True, text=res, spoken=res, category="search")
+        res, url = search_google(query)
+        data = {"url": url} if url else {}
+        return CommandResult(success=True, text=res, spoken=res, category="search", data=data)
 
     def _cmd_google(self, q: str, ql: str) -> CommandResult:
         query = ql.replace("google", "", 1).strip()
-        res = search_google(query)
-        return CommandResult(success=True, text=res, spoken=res, category="search")
+        res, url = search_google(query)
+        data = {"url": url} if url else {}
+        return CommandResult(success=True, text=res, spoken=res, category="search", data=data)
 
     def _cmd_open_generic(self, q: str, ql: str) -> CommandResult:
-        target = ql.replace("open", "", 1).strip()
-        res = open_custom_website_or_app(target)
-        return CommandResult(success=True, text=res, spoken=res, category="launcher")
+        target = ql
+        for p in ("open ", "launch ", "start ", "goto ", "go to ", "browse "):
+            if target.startswith(p):
+                target = target[len(p):].strip()
+                break
+        res_val = open_custom_website_or_app(target)
+        if isinstance(res_val, tuple):
+            res, url = res_val
+        else:
+            res, url = res_val, None
+        data = {"url": url} if url else {}
+        return CommandResult(success=True, text=res, spoken=res, category="launcher", data=data)
 
     # ── Weather & News ────────────────────────────────────────────────────────
 

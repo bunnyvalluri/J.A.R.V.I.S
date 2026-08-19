@@ -1228,20 +1228,120 @@ html, body {
   color: var(--text-muted);
 }
 
-.hud-input, .hud-select {
-  background: rgba(0, 0, 0, 0.4);
-  border: 1px solid var(--border-glass);
+.hud-input {
+  background: rgba(8, 16, 32, 0.75);
+  border: 1px solid var(--border-cyan);
   border-radius: 6px;
-  padding: 7px 12px;
+  padding: 8px 12px;
   color: #fff;
   font-family: var(--font-rajdhani);
-  font-size: 0.88rem;
+  font-size: 0.92rem;
   outline: none;
-  min-height: 36px;
+  min-height: 38px;
+  transition: all 0.2s ease;
 }
 
-.hud-input:focus, .hud-select:focus {
+.hud-input:focus {
   border-color: var(--cyan-core);
+  box-shadow: 0 0 12px var(--cyan-glow);
+}
+
+/* ── Holographic Segmented Card Selector ─────────────────────────────────── */
+.hud-segmented-group {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  width: 100%;
+}
+
+.hud-segment-btn {
+  background: rgba(6, 15, 30, 0.75);
+  border: 1px solid rgba(0, 240, 255, 0.3);
+  border-radius: 8px;
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  color: var(--text-muted);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  text-align: left;
+  position: relative;
+  overflow: hidden;
+}
+
+.hud-segment-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at top right, rgba(0, 240, 255, 0.15), transparent 70%);
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+
+.hud-segment-btn:hover {
+  border-color: var(--cyan-core);
+  color: #fff;
+  background: rgba(10, 25, 50, 0.85);
+  box-shadow: 0 0 16px rgba(0, 240, 255, 0.2);
+  transform: translateY(-1px);
+}
+
+.hud-segment-btn:hover::before {
+  opacity: 1;
+}
+
+.hud-segment-btn.active {
+  background: rgba(0, 240, 255, 0.16);
+  border-color: #00f0ff;
+  color: #fff;
+  box-shadow: 0 0 20px rgba(0, 240, 255, 0.35), inset 0 0 14px rgba(0, 240, 255, 0.2);
+}
+
+.hud-segment-btn.active::after {
+  content: '✓';
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  font-size: 0.75rem;
+  color: #00f0ff;
+  font-weight: 900;
+  text-shadow: 0 0 8px #00f0ff;
+}
+
+.segment-icon {
+  font-size: 1.3rem;
+  flex-shrink: 0;
+  filter: drop-shadow(0 0 6px var(--cyan-core));
+}
+
+.segment-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.segment-title {
+  font-family: var(--font-orbitron);
+  font-size: 0.84rem;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  color: #00f0ff;
+}
+
+.hud-segment-btn.active .segment-title {
+  color: #ffffff;
+  text-shadow: 0 0 8px #00f0ff;
+}
+
+.segment-desc {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  line-height: 1.2;
+}
+
+.hud-segment-btn.active .segment-desc {
+  color: #b0e9fd;
 }
 
 .hud-range {

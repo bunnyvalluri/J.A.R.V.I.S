@@ -131,6 +131,46 @@ async def startup_event() -> None:
     log.info("JARVIS Web Server background telemetry task started.")
 
 
+# ── WebSocket Endpoint ─────────────────────────────────────────────────────────
+
+@app.websocket("/ws")
+async def websocket_endpoint(websocket: WebSocket):
+    await manager.connect(websocket)
+    try:
+        await websocket.send_json({
+            "type": "init",
+            "telemetry": core.get_telemetry(),
+            "notes": core.get_notes()
+        })
+        while True:
+            data = await websocket.receive_text()
+            try:
+                msg = json.loads(data)
+                msg_type = msg.get("type", "")
+                if msg_type == "command":
+                    query = msg.get("query", "").strip()
+                    speak_flag = msg.get("speak", True)
+                    if query:
+                        await manager.broadcast_json({"type": "state", "state": "THINKING"})
+                        res = core.execute(query, speak_aloud=speak_flag)
+                        new_state = "SPEAKING" if (speak_flag and res.spoken and voice.enabled) else "IDLE"
+                        await manager.broadcast_json({"type": "state", "state": new_state})
+                        await manager.broadcast_json({
+                            "type": "command_result",
+                            "query": query,
+                            "result": res.to_dict()
+                        })
+                elif msg_type == "ping":
+                    await websocket.send_json({"type": "pong"})
+            except json.JSONDecodeError:
+                pass
+    except WebSocketDisconnect:
+        manager.disconnect(websocket)
+    except Exception as exc:
+        log.warning(f"WebSocket connection handler error: {exc}")
+        manager.disconnect(websocket)
+
+
 # ── REST Endpoints ─────────────────────────────────────────────────────────────
 
 @app.get("/api/status")
@@ -220,8 +260,12 @@ async def trigger_system_action(req: SystemActionRequest) -> Dict[str, Any]:
         msg = change_volume("mute")
         return {"success": True, "message": msg}
     elif action == "launch" and req.target:
-        msg = open_custom_website_or_app(req.target)
-        return {"success": True, "message": msg}
+        res_val = open_custom_website_or_app(req.target)
+        if isinstance(res_val, tuple):
+            msg, url = res_val
+        else:
+            msg, url = res_val, None
+        return {"success": True, "message": msg, "url": url}
     else:
         raise HTTPException(status_code=400, detail=f"Unknown system action: {action}")
 
@@ -290,12 +334,12 @@ async def serve_index() -> FileResponse:
 
 # ── Main Entry Point ───────────────────────────────────────────────────────────
 
-def start_server(host: str = "127.0.0.1", port: int = 8000, open_browser: bool = True) -> None:
-    url = f"http://{host}:{port}"
+def start_server(host: str = "0.0.0.0", port: int = 8000, open_browser: bool = True) -> None:
+    local_url = f"http://127.0.0.1:{port}"
     print(f"\n========================================================")
     print(f"  J.A.R.V.I.S. Web Application Server")
-    print(f"  Interface running at: {url}")
-    print(f"  WebSocket endpoint : ws://{host}:{port}/ws")
+    print(f"  Interface running at: {local_url} (and http://localhost:{port})")
+    print(f"  WebSocket endpoint : ws://127.0.0.1:{port}/ws")
     print(f"========================================================\n")
 
     if open_browser:
@@ -303,7 +347,7 @@ def start_server(host: str = "127.0.0.1", port: int = 8000, open_browser: bool =
             import time
             time.sleep(1.2)
             try:
-                webbrowser.open_new_tab(url)
+                webbrowser.open_new_tab(local_url)
             except Exception:
                 pass
         import threading
@@ -314,7 +358,7 @@ def start_server(host: str = "127.0.0.1", port: int = 8000, open_browser: bool =
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="JARVIS Web Application HUD")
-    parser.add_argument("--host", default="127.0.0.1", help="Server host address")
+    parser.add_argument("--host", default="0.0.0.0", help="Server host address")
     parser.add_argument("--port", type=int, default=8000, help="Server port")
     parser.add_argument("--no-browser", action="store_true", help="Do not open browser automatically")
     args = parser.parse_args()

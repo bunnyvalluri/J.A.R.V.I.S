@@ -464,6 +464,9 @@
         appendMessage('user', msg.query, 'COMMAND');
         appendMessage('assistant', msg.result.text, (msg.result.category || 'SYSTEM').toUpperCase());
         speakInBrowser(msg.result.spoken || msg.result.text);
+        if (msg.result && msg.result.data && msg.result.data.url) {
+          window.open(msg.result.data.url, '_blank');
+        }
         break;
     }
   }
@@ -565,6 +568,9 @@
         appendMessage('user', cleanQuery, 'COMMAND');
         appendMessage('assistant', data.result.text, (data.result.category || 'SYSTEM').toUpperCase());
         speakInBrowser(data.result.spoken || data.result.text);
+        if (data.result && data.result.data && data.result.data.url) {
+          window.open(data.result.data.url, '_blank');
+        }
       } catch (err) {
         console.error('Command API error:', err);
         appendMessage('assistant', 'Communication link failure, Sir.', 'ERROR');
@@ -647,6 +653,9 @@
         });
         const res = await resp.json();
         appendMessage('assistant', res.message, 'LAUNCHER');
+        if (res.url) {
+          window.open(res.url, '_blank');
+        }
       } catch (err) {
         console.error('System action failed:', err);
       }
@@ -759,6 +768,29 @@
     });
   }
 
+  // ── Persona Segmented Cards ────────────────────────────────────────────────
+  const personaBtns = document.querySelectorAll('.hud-segment-btn');
+  personaBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      personaBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      if (dom.cfgPersona) {
+        dom.cfgPersona.value = btn.dataset.value;
+      }
+    });
+  });
+
+  function setPersonaSegmentedValue(val) {
+    if (dom.cfgPersona) dom.cfgPersona.value = val;
+    personaBtns.forEach(b => {
+      if (b.dataset.value === val) {
+        b.classList.add('active');
+      } else {
+        b.classList.remove('active');
+      }
+    });
+  }
+
   // ── Settings Modal ─────────────────────────────────────────────────────────
   if (dom.btnSettingsOpen) {
     dom.btnSettingsOpen.addEventListener('click', async () => {
@@ -766,7 +798,7 @@
         const resp = await fetch('/api/config');
         const cfg = await resp.json();
         if (dom.cfgUserName) dom.cfgUserName.value = cfg.user_name || 'Vallu';
-        if (dom.cfgPersona) dom.cfgPersona.value = cfg.assistant_name || 'JARVIS';
+        setPersonaSegmentedValue(cfg.assistant_name || 'JARVIS');
         if (dom.cfgSpeechRate) {
           dom.cfgSpeechRate.value = cfg.speech_rate || 180;
           if (dom.speechRateVal) dom.speechRateVal.textContent = cfg.speech_rate || 180;

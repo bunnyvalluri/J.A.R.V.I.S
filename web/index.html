@@ -395,11 +395,24 @@
         </div>
 
         <div class="config-group">
-          <label for="cfgPersona">Active AI Persona</label>
-          <select id="cfgPersona" class="hud-select">
-            <option value="JARVIS">J.A.R.V.I.S. (Professional Male)</option>
-            <option value="FRIDAY">F.R.I.D.A.Y. (Articulate Female)</option>
-          </select>
+          <label>Active AI Persona</label>
+          <input type="hidden" id="cfgPersona" value="JARVIS">
+          <div class="hud-segmented-group" id="personaSegmentedGroup">
+            <button type="button" class="hud-segment-btn active" data-value="JARVIS">
+              <span class="segment-icon">⚡</span>
+              <div class="segment-info">
+                <span class="segment-title">J.A.R.V.I.S.</span>
+                <span class="segment-desc">Professional Male Core</span>
+              </div>
+            </button>
+            <button type="button" class="hud-segment-btn" data-value="FRIDAY">
+              <span class="segment-icon">💠</span>
+              <div class="segment-info">
+                <span class="segment-title">F.R.I.D.A.Y.</span>
+                <span class="segment-desc">Articulate Female Voice</span>
+              </div>
+            </button>
+          </div>
         </div>
 
         <div class="config-group">
