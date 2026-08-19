@@ -11,9 +11,13 @@ from __future__ import annotations
 import sys
 import queue
 import threading
-import pyttsx3
 from pathlib import Path
 from typing import Optional
+
+try:
+    import pyttsx3
+except Exception:
+    pyttsx3 = None
 
 # Ensure src in sys.path
 SRC_DIR = Path(__file__).resolve().parent.parent
@@ -50,6 +54,10 @@ class VoiceEngine:
 
     def _init_engine(self) -> None:
         """Initialise or reinitialise the pyttsx3 engine."""
+        if not pyttsx3:
+            self.engine = None
+            self.enabled = False
+            return
         try:
             self.engine = pyttsx3.init()
             self.voices = self.engine.getProperty("voices") or []

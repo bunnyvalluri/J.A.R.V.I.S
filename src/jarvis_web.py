@@ -309,11 +309,15 @@ async def get_history() -> List[Dict[str, Any]]:
 
 
 # ── Static File Hosting ────────────────────────────────────────────────────────
-STATIC_DIR.mkdir(parents=True, exist_ok=True)
-(STATIC_DIR / "css").mkdir(parents=True, exist_ok=True)
-(STATIC_DIR / "js").mkdir(parents=True, exist_ok=True)
+try:
+    STATIC_DIR.mkdir(parents=True, exist_ok=True)
+    (STATIC_DIR / "css").mkdir(parents=True, exist_ok=True)
+    (STATIC_DIR / "js").mkdir(parents=True, exist_ok=True)
+except Exception:
+    pass
 
-app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
+if STATIC_DIR.exists():
+    app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 
 
 @app.get("/favicon.ico", include_in_schema=False)

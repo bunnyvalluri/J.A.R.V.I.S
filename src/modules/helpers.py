@@ -9,7 +9,10 @@ import sys
 import json
 import datetime
 import pyjokes
-import speech_recognition as sr
+try:
+    import speech_recognition as sr
+except Exception:
+    sr = None
 from difflib import get_close_matches
 from pathlib import Path
 
@@ -166,6 +169,18 @@ def takeCommand(mode: str = "hybrid") -> str:
         return ""
 
     # Voice branch
+    if sr is None:
+        if mode == "hybrid":
+            try:
+                user_input = input("\n  [Type Command] > ").strip()
+                if user_input:
+                    print_user_input(user_input, "Text")
+                    log.info(f"Hybrid text fallback: '{user_input}'")
+                    return user_input
+            except (KeyboardInterrupt, EOFError):
+                raise
+        return ""
+
     r = sr.Recognizer()
     r.dynamic_energy_threshold = True
     r.pause_threshold = 0.85

@@ -1,6 +1,7 @@
 # ─────────────────────────────────────────────────────────────────────────────
 # J.A.R.V.I.S. — Production Requirements
 # Python 3.9+ recommended (Compatible with Python 3.10 - 3.13)
+# Fully Compatible with Linux Cloud Containers (Vercel Serverless) & Windows Desktop
 # ─────────────────────────────────────────────────────────────────────────────
 
 # ── Core AI & Language ────────────────────────────────────────────────────────
@@ -17,24 +18,19 @@ pydantic>=2.6.0                  # Data validation and settings management
 # ── Environment & Configuration ───────────────────────────────────────────────
 python-dotenv>=1.0.0             # .env file loading
 
-# ── Voice & Audio ─────────────────────────────────────────────────────────────
-pyttsx3>=2.90                    # Offline text-to-speech engine
-SpeechRecognition>=3.10.0        # Speech recognition engine
-PyAudio>=0.2.13                  # Microphone hardware audio capture
-
 # ── System & Hardware Diagnostics ─────────────────────────────────────────────
 psutil>=5.9.0                    # CPU, RAM, battery, disk telemetry
-PyAutoGUI>=0.9.54                # Screenshot capture & volume controls
-pywin32>=306                     # Windows OS COM integration
-pypiwin32>=223                   # Windows native support
-
-# ── Network & Services ────────────────────────────────────────────────────────
 requests>=2.31.0                 # HTTP transport client for APIs
 feedparser>=6.0.8                # RSS news feed parser
 geocoder>=1.38.1                 # IP-based geolocation
 beautifulsoup4>=4.12.0           # HTML parsing
-
-# ── Terminal & Display ────────────────────────────────────────────────────────
 colorama>=0.4.6                  # ANSI terminal styling & colors
 pyjokes>=0.6.0                   # Offline developer humor
 Pillow>=10.0.0                   # Image handling and screenshots
+
+# ── Desktop-Specific & Windows Platform Modules ──────────────────────────────
+pyttsx3>=2.90; sys_platform == 'win32'
+SpeechRecognition>=3.10.0; sys_platform == 'win32'
+PyAutoGUI>=0.9.54; sys_platform == 'win32'
+pywin32>=306; sys_platform == 'win32'
+pypiwin32>=223; sys_platform == 'win32'

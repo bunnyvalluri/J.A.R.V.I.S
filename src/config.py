@@ -21,13 +21,20 @@ SRC_DIR         = Path(__file__).resolve().parent
 BASE_DIR        = SRC_DIR.parent
 DATA_DIR        = BASE_DIR / "data"
 LOG_DIR         = BASE_DIR / "logs"
-WEB_DIR         = BASE_DIR / "web"
+WEB_DIR         = (BASE_DIR / "public") if (BASE_DIR / "public").exists() else (BASE_DIR / "web")
 STATIC_DIR      = WEB_DIR / "static"
 ASSETS_DIR      = BASE_DIR / "assets"
 DOCS_DIR        = BASE_DIR / "docs"
 
-DATA_DIR.mkdir(parents=True, exist_ok=True)
-LOG_DIR.mkdir(parents=True, exist_ok=True)
+try:
+    DATA_DIR.mkdir(parents=True, exist_ok=True)
+except Exception:
+    pass
+
+try:
+    LOG_DIR.mkdir(parents=True, exist_ok=True)
+except Exception:
+    pass
 
 DATA_FILE       = DATA_DIR / "data.json"
 NOTES_FILE      = DATA_DIR / "notes.json"

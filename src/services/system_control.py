@@ -8,8 +8,12 @@ import sys
 import ctypes
 import datetime
 import psutil
-import pyautogui
 from pathlib import Path
+
+try:
+    import pyautogui
+except Exception:
+    pyautogui = None
 
 # Ensure src in sys.path
 SRC_DIR = Path(__file__).resolve().parent.parent
@@ -25,7 +29,10 @@ def get_system_stats():
     """Fetch real-time CPU, RAM, Disk, and Battery diagnostics."""
     cpu = psutil.cpu_percent(interval=None)
     ram = psutil.virtual_memory()
-    disk = psutil.disk_usage('/')
+    try:
+        disk = psutil.disk_usage('/')
+    except Exception:
+        disk = None
     battery = psutil.sensors_battery()
 
     bat_info = "AC Connected"
@@ -37,7 +44,7 @@ def get_system_stats():
     display = {
         "cpu": f"{cpu}%",
         "ram": f"{ram.percent}% ({round(ram.used / (1024**3), 1)}GB / {round(ram.total / (1024**3), 1)}GB)",
-        "disk": f"{disk.percent}% ({round(disk.free / (1024**3), 1)}GB free)",
+        "disk": f"{disk.percent}% ({round(disk.free / (1024**3), 1)}GB free)" if disk else "N/A",
         "battery": bat_info
     }
     return spoken, display
@@ -45,6 +52,8 @@ def get_system_stats():
 
 def take_screenshot():
     """Take a screenshot and save it to the Pictures/JARVIS_Screenshots directory."""
+    if not pyautogui:
+        return "Screenshot capture is available in local desktop environments, Sir."
     try:
         SCREENSHOTS_DIR.mkdir(parents=True, exist_ok=True)
         timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -60,6 +69,8 @@ def take_screenshot():
 
 def change_volume(action="up"):
     """Control system audio volume via media keys."""
+    if not pyautogui:
+        return "Volume adjustment is available in local desktop environments, Sir."
     try:
         if action == "up":
             for _ in range(5):
@@ -79,8 +90,10 @@ def change_volume(action="up"):
 def lock_screen():
     """Lock the Windows workstation."""
     try:
-        ctypes.windll.user32.LockWorkStation()
-        return "Screen locked, Sir."
+        if hasattr(ctypes, "windll") and hasattr(ctypes.windll, "user32"):
+            ctypes.windll.user32.LockWorkStation()
+            return "Screen locked, Sir."
+        return "Workstation lock is supported on Windows desktop environments, Sir."
     except Exception as e:
         return f"Failed to lock screen: {e}"
 

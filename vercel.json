@@ -1,0 +1,40 @@
+{
+  "version": 2,
+  "name": "jarvis",
+  "builds": [
+    {
+      "src": "api/index.py",
+      "use": "@vercel/python"
+    },
+    {
+      "src": "public/**",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/api/index.py"
+    },
+    {
+      "src": "/static/(.*)",
+      "dest": "/public/static/$1"
+    },
+    {
+      "src": "/favicon.ico",
+      "dest": "/public/static/favicon.ico"
+    },
+    {
+      "src": "/favicon.png",
+      "dest": "/public/static/favicon.png"
+    },
+    {
+      "src": "/favicon.svg",
+      "dest": "/public/static/favicon.svg"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/public/index.html"
+    }
+  ]
+}

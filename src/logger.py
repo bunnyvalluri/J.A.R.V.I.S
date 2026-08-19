@@ -33,7 +33,10 @@ def _build_logger() -> logging.Logger:
         return logger
 
     # Ensure log directory
-    LOG_DIR.mkdir(parents=True, exist_ok=True)
+    try:
+        LOG_DIR.mkdir(parents=True, exist_ok=True)
+    except Exception:
+        pass
     today = datetime.datetime.now().strftime("%Y%m%d")
     log_file = LOG_DIR / f"jarvis_{today}.log"
 

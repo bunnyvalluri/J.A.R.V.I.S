@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>J.A.R.V.I.S. — Production AI Cockpit HUD</title>
+  <meta name="description" content="Production-grade personal AI assistant holographic HUD interface with live telemetry, voice recognition, and system control.">
+  <meta name="theme-color" content="#050811">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+  <link rel="icon" type="image/png" href="/static/favicon.png">
+  <link rel="shortcut icon" href="/static/favicon.ico">
+  <link rel="apple-touch-icon" href="/static/favicon.png">
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+  <!-- Ambient Sci-Fi Grid Overlay -->
+  <div class="hud-background">
+    <div class="hud-grid"></div>
+    <div class="hud-scanlines"></div>
+    <div class="hud-glow-orb top-left"></div>
+    <div class="hud-glow-orb bottom-right"></div>
+  </div>
+
+  <!-- Main Container -->
+  <div class="hud-container">
+    
+    <!-- ── Top Header ────────────────────────────────────────────── -->
+    <header class="hud-header glass-panel">
+      <div class="header-left">
+        <div class="reactor-mini-icon">
+          <div class="ring-spin"></div>
+          <div class="core-dot"></div>
+        </div>
+        <div class="brand-title">
+          <h1>J . A . R . V . I . S</h1>
+          <span class="brand-subtitle">JUST A RATHER VERY INTELLIGENT SYSTEM &bull; v2.0 PRO</span>
+        </div>
+      </div>
+
+      <div class="header-center">
+        <div class="hud-status-badge" id="hudStatusBadge">
+          <span class="status-indicator online" id="statusDot"></span>
+          <span class="status-text" id="statusText">SYSTEM ONLINE</span>
+        </div>
+        <div class="telemetry-pill hide-on-mobile">
+          <span class="pill-label">PERSONA</span>
+          <span class="pill-value" id="currentPersona">JARVIS</span>
+        </div>
+        <div class="telemetry-pill hide-on-mobile">
+          <span class="pill-label">UPTIME</span>
+          <span class="pill-value" id="systemUptime">00:00:00</span>
+        </div>
+      </div>
+
+      <div class="header-right">
+        <div class="clock-display hide-on-mobile" id="hudClock">12:00:00 PM</div>
+        <button class="hud-btn hud-btn-icon" id="btnVoiceToggle" title="Toggle Voice Speech Output" aria-label="Toggle Voice Output">
+          <svg class="icon icon-voice" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#00f0ff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+          </svg>
+        </button>
+        <button class="hud-btn hud-btn-icon" id="btnSettingsOpen" title="Settings" aria-label="Open Settings">
+          <svg class="icon icon-gear" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#00f0ff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- ── Mobile / Tablet Section Switcher Bar ────────────────────── -->
+    <nav class="hud-mobile-nav" id="hudMobileNav" aria-label="Mobile Navigation">
+      <button class="mobile-tab-btn active" data-target="stage">
+        <span class="tab-icon">⚡</span>
+        <span class="tab-text">COCKPIT</span>
+      </button>
+      <button class="mobile-tab-btn" data-target="telemetry">
+        <span class="tab-icon">📊</span>
+        <span class="tab-text">SENSORS</span>
+      </button>
+      <button class="mobile-tab-btn" data-target="launcher">
+        <span class="tab-icon">🚀</span>
+        <span class="tab-text">LAUNCHER</span>
+      </button>
+      <button class="mobile-tab-btn" data-target="radar">
+        <span class="tab-icon">🌐</span>
+        <span class="tab-text">FEEDS</span>
+      </button>
+      <button class="mobile-tab-btn" data-target="vault">
+        <span class="tab-icon">📝</span>
+        <span class="tab-text">VAULT</span>
+      </button>
+    </nav>
+
+    <!-- ── Main Cockpit Layout ────────────────────────────────────── -->
+    <main class="hud-main">
+
+      <!-- LEFT WING: System Telemetry & Quick Launcher -->
+      <section class="hud-wing left-wing" id="leftWing">
+        
+        <!-- Hardware Telemetry Panel -->
+        <div class="hud-card glass-panel" id="telemetryCard" data-section="telemetry">
+          <div class="card-header">
+            <span class="corner-bracket top-left"></span>
+            <span class="corner-bracket top-right"></span>
+            <h3>HARDWARE TELEMETRY</h3>
+            <span class="badge" id="hostBadge">HOST</span>
+          </div>
+          <div class="card-body">
+            
+            <!-- Radial / Bar Gauges -->
+            <div class="gauge-grid">
+              <div class="gauge-box">
+                <div class="gauge-header">
+                  <span>CPU LOAD</span>
+                  <span class="gauge-value" id="cpuValue">0%</span>
+                </div>
+                <div class="progress-bar-bg">
+                  <div class="progress-bar-fill cpu" id="cpuBar" style="width: 0%;"></div>
+                </div>
+              </div>
+
+              <div class="gauge-box">
+                <div class="gauge-header">
+                  <span>MEMORY (RAM)</span>
+                  <span class="gauge-value" id="ramValue">0%</span>
+                </div>
+                <div class="progress-bar-bg">
+                  <div class="progress-bar-fill ram" id="ramBar" style="width: 0%;"></div>
+                </div>
+                <div class="gauge-sub" id="ramDetails">0.0 / 0.0 GB</div>
+              </div>
+
+              <div class="gauge-box">
+                <div class="gauge-header">
+                  <span>PRIMARY DISK</span>
+                  <span class="gauge-value" id="diskValue">0%</span>
+                </div>
+                <div class="progress-bar-bg">
+                  <div class="progress-bar-fill disk" id="diskBar" style="width: 0%;"></div>
+                </div>
+                <div class="gauge-sub" id="diskDetails">0.0 GB free</div>
+              </div>
+
+              <div class="gauge-box">
+                <div class="gauge-header">
+                  <span>POWER / BATTERY</span>
+                  <span class="gauge-value" id="batteryValue">100%</span>
+                </div>
+                <div class="progress-bar-bg">
+                  <div class="progress-bar-fill battery" id="batteryBar" style="width: 100%;"></div>
+                </div>
+                <div class="gauge-sub" id="batteryDetails">AC Power Connected</div>
+              </div>
+            </div>
+
+            <!-- Network Info Bar -->
+            <div class="network-bar">
+              <div class="net-item">
+                <span class="net-label">IP ADDRESS</span>
+                <span class="net-val" id="networkIp">127.0.0.1</span>
+              </div>
+              <div class="net-item">
+                <span class="net-label">BRAIN LINK</span>
+                <span class="net-val highlight" id="brainLinkStatus">ONLINE</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Quick System Launcher Grid -->
+        <div class="hud-card glass-panel launcher-card" id="launcherCard" data-section="launcher">
+          <div class="card-header">
+            <h3>COMMAND LAUNCHER</h3>
+            <span class="badge">ACTIONS</span>
+          </div>
+          <div class="card-body">
+            <div class="launcher-grid">
+              <button class="launch-btn" data-action="launch" data-target="vscode">
+                <span class="btn-icon">⚡</span>
+                <span class="btn-name">VS Code</span>
+              </button>
+              <button class="launch-btn" data-action="launch" data-target="spotify">
+                <span class="btn-icon">🎵</span>
+                <span class="btn-name">Spotify</span>
+              </button>
+              <button class="launch-btn" data-action="launch" data-target="whatsapp">
+                <span class="btn-icon">💬</span>
+                <span class="btn-name">WhatsApp</span>
+              </button>
+              <button class="launch-btn" data-action="launch" data-target="terminal">
+                <span class="btn-icon">💻</span>
+                <span class="btn-name">Terminal</span>
+              </button>
+              <button class="launch-btn" data-action="launch" data-target="calculator">
+                <span class="btn-icon">🔢</span>
+                <span class="btn-name">Calculator</span>
+              </button>
+              <button class="launch-btn" data-action="launch" data-target="explorer">
+                <span class="btn-icon">📁</span>
+                <span class="btn-name">Explorer</span>
+              </button>
+              <button class="launch-btn special-action" data-action="screenshot">
+                <span class="btn-icon">📸</span>
+                <span class="btn-name">Screenshot</span>
+              </button>
+              <button class="launch-btn special-action danger" data-action="lock">
+                <span class="btn-icon">🔒</span>
+                <span class="btn-name">Lock PC</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- CENTER STAGE: Arc Reactor HUD & Holographic Chat Terminal -->
+      <section class="hud-stage center-stage" id="centerStage" data-section="stage">
+        
+        <!-- Arc Reactor Visualizer Unit -->
+        <div class="reactor-container glass-panel">
+          <div class="reactor-wrapper">
+            <canvas id="reactorCanvas" width="280" height="280"></canvas>
+            <div class="reactor-core-info">
+              <div class="reactor-state-title" id="reactorState">JARVIS</div>
+              <div class="reactor-mode-label" id="reactorMode">ONLINE &bull; STANDBY</div>
+            </div>
+          </div>
+          <!-- Audio Waveform Visualizer -->
+          <div class="wave-visualizer" id="waveVisualizer">
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+          </div>
+        </div>
+
+        <!-- Holographic Chat & Command Terminal -->
+        <div class="hud-card glass-panel terminal-card">
+          <div class="card-header">
+            <h3>HOLOGRAPHIC TERMINAL</h3>
+            <span class="terminal-session" id="terminalSessionId">SESSION: ACTIVE</span>
+          </div>
+
+          <!-- Chat Stream Messages -->
+          <div class="chat-stream" id="chatStream">
+            <div class="message-bubble assistant">
+              <div class="msg-meta">
+                <span class="msg-author">J.A.R.V.I.S.</span>
+                <span class="msg-category">INITIALIZATION</span>
+                <span class="msg-time">Just now</span>
+              </div>
+              <div class="msg-content">
+                All systems initialized and fully operational. I am standing by for your command, Sir.
+              </div>
+            </div>
+          </div>
+
+          <!-- Suggested Quick Command Chips -->
+          <div class="quick-chips" id="quickChips">
+            <button class="chip-btn" data-query="What is the weather today?">🌤️ Weather</button>
+            <button class="chip-btn" data-query="System stats">📊 Telemetry</button>
+            <button class="chip-btn" data-query="Top news">📰 Headlines</button>
+            <button class="chip-btn" data-query="Take screenshot">📸 Screenshot</button>
+            <button class="chip-btn" data-query="Tell me a joke">😂 Joke</button>
+            <button class="chip-btn" data-query="Read my notes">📝 Notes</button>
+          </div>
+
+          <!-- Input Bar with Mic & Send -->
+          <div class="hud-input-bar">
+            <button class="mic-btn" id="btnMic" title="Click to speak (Voice Recognition)" aria-label="Start Voice Recognition">
+              <div class="mic-pulse-ring"></div>
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+                <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+                <line x1="12" y1="19" x2="12" y2="23"></line>
+                <line x1="8" y1="23" x2="16" y2="23"></line>
+              </svg>
+            </button>
+            <div class="input-wrapper">
+              <input type="text" id="cmdInput" placeholder="Give JARVIS a command or question..." autocomplete="off">
+            </div>
+            <button class="send-btn" id="btnSend" title="Transmit Command" aria-label="Transmit Command">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="22" y1="2" x2="11" y2="13"></line>
+                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- RIGHT WING: Intelligence, Weather, News & Memory Notes -->
+      <section class="hud-wing right-wing" id="rightWing">
+        
+        <!-- Live Weather Card -->
+        <div class="hud-card glass-panel weather-card" id="radarCard" data-section="radar">
+          <div class="card-header">
+            <h3>ATMOSPHERIC RADAR</h3>
+            <span class="badge" id="weatherCity">LOCATING</span>
+          </div>
+          <div class="card-body">
+            <div class="weather-content" id="weatherContent">
+              <div class="weather-main">
+                <span class="temp-big" id="weatherTemp">--°C</span>
+                <div class="weather-cond-box">
+                  <span class="cond-text" id="weatherCondition">Scanning skies...</span>
+                  <span class="wind-text" id="weatherWind">Wind: -- km/h</span>
+                </div>
+              </div>
+              <div class="weather-extra">
+                <div class="extra-item">
+                  <span>HUMIDITY</span>
+                  <strong id="weatherHumidity">--%</strong>
+                </div>
+                <div class="extra-item">
+                  <span>STATUS</span>
+                  <strong id="weatherStatus" class="highlight">OPTIMAL</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Real-Time News Feed -->
+        <div class="hud-card glass-panel news-card" id="newsCard" data-section="radar">
+          <div class="card-header">
+            <h3>INTELLIGENCE FEED</h3>
+            <div class="news-tabs">
+              <button class="tab-btn active" data-cat="top">Top</button>
+              <button class="tab-btn" data-cat="tech">Tech</button>
+              <button class="tab-btn" data-cat="world">World</button>
+            </div>
+          </div>
+          <div class="card-body news-scroll" id="newsContainer">
+            <div class="loading-spinner">Loading intelligence briefing...</div>
+          </div>
+        </div>
+
+        <!-- Memory & Notes Vault -->
+        <div class="hud-card glass-panel notes-card" id="vaultCard" data-section="vault">
+          <div class="card-header">
+            <h3>MEMORY VAULT</h3>
+            <button class="hud-btn-mini" id="btnClearNotes" title="Clear all notes">CLEAR</button>
+          </div>
+          <div class="card-body">
+            <!-- Add Note Input -->
+            <form class="add-note-form" id="addNoteForm">
+              <input type="text" id="noteInput" placeholder="Save memory / note..." autocomplete="off">
+              <button type="submit" class="hud-btn-mini primary" aria-label="Add Note">+</button>
+            </form>
+            <!-- Notes List -->
+            <div class="notes-list-scroll" id="notesList">
+              <div class="empty-state">No recorded memory notes found.</div>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ── Settings Modal ──────────────────────────────────────────── -->
+  <div class="hud-modal-backdrop" id="settingsModal">
+    <div class="hud-modal glass-panel">
+      <div class="modal-header">
+        <h2>SYSTEM CONFIGURATION</h2>
+        <button class="modal-close" id="btnSettingsClose" aria-label="Close Settings">&times;</button>
+      </div>
+      <div class="modal-body">
+        
+        <div class="config-group">
+          <label for="cfgUserName">User Name / Designation</label>
+          <input type="text" id="cfgUserName" class="hud-input" value="Vallu">
+        </div>
+
+        <div class="config-group">
+          <label>Active AI Persona</label>
+          <input type="hidden" id="cfgPersona" value="JARVIS">
+          <div class="hud-segmented-group" id="personaSegmentedGroup">
+            <button type="button" class="hud-segment-btn active" data-value="JARVIS">
+              <span class="segment-icon">⚡</span>
+              <div class="segment-info">
+                <span class="segment-title">J.A.R.V.I.S.</span>
+                <span class="segment-desc">Professional Male Core</span>
+              </div>
+            </button>
+            <button type="button" class="hud-segment-btn" data-value="FRIDAY">
+              <span class="segment-icon">💠</span>
+              <div class="segment-info">
+                <span class="segment-title">F.R.I.D.A.Y.</span>
+                <span class="segment-desc">Articulate Female Voice</span>
+              </div>
+            </button>
+          </div>
+        </div>
+
+        <div class="config-group">
+          <label>Speech Output Speed (<span id="speechRateVal">180</span> WPM)</label>
+          <input type="range" id="cfgSpeechRate" min="100" max="260" step="10" value="180" class="hud-range">
+        </div>
+
+        <div class="config-group">
+          <label>Speech Volume (<span id="speechVolumeVal">100</span>%)</label>
+          <input type="range" id="cfgSpeechVolume" min="0" max="1" step="0.1" value="1.0" class="hud-range">
+        </div>
+
+        <div class="config-group checkbox-group">
+          <label class="switch-label">
+            <input type="checkbox" id="cfgVoiceEnabled" checked>
+            <span class="switch-slider"></span>
+            Enable Voice Speech Audio
+          </label>
+        </div>
+
+        <div class="modal-actions">
+          <button class="hud-btn primary" id="btnSaveConfig">SAVE PROTOCOLS</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/static/js/app.js"></script>
+</body>
+</html>
