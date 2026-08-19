@@ -7,6 +7,7 @@ import pyautogui
 from pathlib import Path
 from config import SCREENSHOTS_DIR
 from ui import print_status, print_info, SUCCESS, WARNING, PRIMARY
+from logger import log
 
 def get_system_stats():
     """Fetch real-time CPU, RAM, Disk, and Battery diagnostics."""

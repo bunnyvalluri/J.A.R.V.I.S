@@ -1,12 +1,13 @@
 <div align="center">
 
-# 🤖 J.A.R.V.I.S — Desktop AI Assistant
+# 🤖 J.A.R.V.I.S — Production-Grade Desktop AI Assistant
 
-**Just A Rather Very Intelligent System — A Modular, Multi-Modal Python Voice & Automation Assistant**
+**Just A Rather Very Intelligent System — A Modular, Multi-Modal Python Voice & Automation Assistant Powered by Google Gemini 2.0 Flash**
 
-[![Python Version](https://img.shields.io/badge/python-3.8%20%7C%203.9%20%7C%203.10%20%7C%203.11-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
+[![Python Version](https://img.shields.io/badge/python-3.9%20%7C%203.10%20%7C%203.11%20%7C%203.12%20%7C%203.13-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
 [![Platform Support](https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20macOS-0078D6?style=for-the-badge&logo=windows&logoColor=white)](https://github.com/bunnyvalluri/J.A.R.V.I.S)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](LICENSE)
+[![LLM: Gemini 2.0 Flash](https://img.shields.io/badge/LLM-Gemini%202.0%20Flash-4285F4?style=for-the-badge&logo=google&logoColor=white)](https://aistudio.google.com/)
 [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg?style=for-the-badge)](#)
 
 <br/>
@@ -16,12 +17,15 @@
 <br/>
 
 <p align="center">
+  <a href="#-overview">Overview</a> •
   <a href="#-key-features">Key Features</a> •
   <a href="#-architecture">Architecture</a> •
   <a href="#-quick-start">Quick Start</a> •
+  <a href="#-execution-modes">Execution Modes</a> •
   <a href="#-command-reference">Command Reference</a> •
   <a href="#-configuration">Configuration</a> •
-  <a href="#-media-showcase">Showcase</a> •
+  <a href="#-logging--diagnostics">Logging & Diagnostics</a> •
+  <a href="#-roadmap">Roadmap</a> •
   <a href="#-contributing">Contributing</a>
 </p>
 
@@ -31,9 +35,9 @@
 
 ## 🌟 Overview
 
-**J.A.R.V.I.S** is a comprehensive, production-grade desktop virtual assistant crafted in Python. Designed for productivity, automation, and convenience, it bridges offline voice synthesis with real-time web services, computer vision security, system telemetry, and desktop application orchestration.
+**J.A.R.V.I.S (Version 2.0 Pro)** is a production-grade personal desktop artificial intelligence assistant built in Python. Engineered with high resilience, modular design, and extensible command architecture, it seamlessly bridges offline text-to-speech synthesis and speech recognition with **Google Gemini 2.0 Flash** conversational reasoning, real-time live telemetry, OS-level automation, and computer vision.
 
-Whether you prefer natural hands-free voice commands or rapid keyboard input in the interactive terminal, J.A.R.V.I.S seamlessly adapts to your workflow.
+Whether issuing voice commands hands-free through your microphone or executing tasks swiftly via the terminal console, J.A.R.V.I.S dynamically adapts to your workflow with sub-second responsiveness.
 
 ---
 
@@ -42,54 +46,54 @@ Whether you prefer natural hands-free voice commands or rapid keyboard input in 
 <table>
   <tr>
     <td width="50%">
+      <h3>🧠 Gemini 2.0 Flash AI Brain</h3>
+      <ul>
+        <li><b>Context-Aware Intelligence:</b> Uses Google Gemini 2.0 Flash for open-ended queries, reasoning, coding, and complex knowledge.</li>
+        <li><b>Session Memory:</b> Rolling conversation history preserves multi-turn context.</li>
+        <li><b>Persona Directives:</b> Calibrated system instructions ensure an authentic, polite, and witty JARVIS personality.</li>
+      </ul>
+    </td>
+    <td width="50%">
       <h3>🎙️ Multi-Modal Interaction</h3>
       <ul>
-        <li><b>Hybrid Input:</b> Seamlessly accept mic voice or console typing.</li>
-        <li><b>Voice Persona Switcher:</b> Switch on-the-fly between <b>J.A.R.V.I.S</b> (Male) and <b>F.R.I.D.A.Y</b> (Female).</li>
-        <li><b>Offline Speech Synthesis:</b> Fast, low-latency text-to-speech via <code>pyttsx3</code>.</li>
-      </ul>
-    </td>
-    <td width="50%">
-      <h3>⚡ System Control & Telemetry</h3>
-      <ul>
-        <li><b>Hardware Diagnostics:</b> Real-time CPU usage, RAM utilization, and battery status.</li>
-        <li><b>Automated Screenshots:</b> Instant capture saved automatically to your Pictures directory.</li>
-        <li><b>OS Operations:</b> Volume adjustment, workstation lock, IP lookup, date/time queries.</li>
+        <li><b>Hybrid Input Loop:</b> Seamless simultaneous support for voice dictation and typed terminal commands.</li>
+        <li><b>Dual Persona Switcher:</b> Instant runtime toggle between <b>J.A.R.V.I.S</b> (Male) and <b>F.R.I.D.A.Y</b> (Female) voice engines.</li>
+        <li><b>Offline Low-Latency TTS:</b> Immediate local voice output powered by <code>pyttsx3</code> with self-healing recovery.</li>
       </ul>
     </td>
   </tr>
   <tr>
     <td width="50%">
-      <h3>🚀 App Launcher & Automation</h3>
+      <h3>⚡ System Telemetry & Control</h3>
       <ul>
-        <li><b>Developer & Productivity Tools:</b> One-click launch for VS Code, Terminal, WhatsApp, Notepad, Task Manager, and Calculator.</li>
-        <li><b>Media Control:</b> Direct integration with Spotify and web media streams.</li>
-        <li><b>Deep Search:</b> Direct query routing for Google, YouTube, and Wikipedia summaries.</li>
+        <li><b>Hardware Health:</b> Real-time monitoring of CPU load, RAM usage, storage capacity, and battery percentage.</li>
+        <li><b>OS Operations:</b> Master audio control (volume up/down/mute), workstation lock, and network IP resolution.</li>
+        <li><b>Automated Screenshots:</b> Instant screen capture archived with timestamps to your Pictures directory.</li>
       </ul>
     </td>
     <td width="50%">
-      <h3>🌐 Intelligence & Utilities</h3>
+      <h3>🚀 App Launcher & Web Automation</h3>
       <ul>
-        <li><b>Live Weather & Geolocation:</b> Dynamic temperature, humidity, wind, and forecast metrics.</li>
-        <li><b>Real-Time News:</b> Multi-source headline feeds (Google News, BBC, Times of India).</li>
-        <li><b>Intelligent Dictionary:</b> Built-in definition lookup with typo auto-correction & fuzzy matching.</li>
+        <li><b>Desktop Apps:</b> One-command launch for VS Code, PowerShell / Terminal, WhatsApp, Spotify, Notepad, Task Manager, and Calculator.</li>
+        <li><b>Deep Search Routing:</b> Instant query redirection for Google, YouTube, Wikipedia summaries, ChatGPT, GitHub, and Stack Overflow.</li>
       </ul>
     </td>
   </tr>
   <tr>
     <td width="50%">
-      <h3>📝 Productivity & Notes</h3>
+      <h3>🌐 Live Data Services</h3>
       <ul>
-        <li><b>Persistent Scratchpad:</b> Quick dictation, storage, retrieval, and clearing of notes/todos.</li>
-        <li><b>Multi-Language Translation:</b> Translation assistance for phrases and terminology.</li>
+        <li><b>Geolocation & Weather:</b> Automatic location detection with hyper-local conditions (temperature, humidity, wind velocity).</li>
+        <li><b>Curated News Feeds:</b> Multi-source live headlines via RSS (Google News, BBC World, Times of India).</li>
+        <li><b>Intelligent Lexicon:</b> Offline dictionary with phonetic & fuzzy matching auto-correction.</li>
       </ul>
     </td>
     <td width="50%">
-      <h3>👁️ Vision & Media Tools</h3>
+      <h3>🛡️ Resilience, Logging & Notes</h3>
       <ul>
-        <li><b>Face Recognition Auth:</b> Integrated OpenCV facial authentication pipeline.</li>
-        <li><b>Media Downloader:</b> Standalone YouTube video downloading module.</li>
-        <li><b>Optical Character Recognition (OCR):</b> Text extraction from image inputs.</li>
+        <li><b>Session-Tagged Logging:</b> Daily rotating log files (<code>logs/jarvis_YYYYMMDD.log</code>) with unique session UUIDs.</li>
+        <li><b>Startup Self-Test:</b> Automated pre-flight validation of all sub-modules upon initialization.</li>
+        <li><b>Structured JSON Scratchpad:</b> Timestamped notes with automated migration from legacy storage.</li>
       </ul>
     </td>
   </tr>
@@ -101,21 +105,24 @@ Whether you prefer natural hands-free voice commands or rapid keyboard input in 
 
 ```
 J.A.R.V.I.S/
-├── jarvis.py                 # Core application controller & intent router
-├── config.py                 # Central configuration manager (config.json)
-├── voice_engine.py           # Text-to-speech engine & persona management
-├── helpers.py                # Command listener, speech recognition & utilities
-├── system_control.py         # Hardware telemetry, volume & OS-level commands
-├── app_launcher.py           # Desktop app & web navigation launcher
+├── jarvis.py                 # Core application controller & Priority CommandRegistry
+├── ai_brain.py               # Google Gemini 2.0 Flash integration & conversation memory
+├── logger.py                 # Structured daily rotating session logger & UUID tagging
+├── config.py                 # Type-safe AppConfig dataclass, .env loader & config.json manager
+├── voice_engine.py           # Text-to-speech singleton engine & persona manager
+├── helpers.py                # Speech recognition, JSON notes engine & dictionary
+├── system_control.py         # Hardware telemetry, volume & OS automation
+├── app_launcher.py           # Desktop application & web URL orchestrator
 ├── weather_service.py        # Geolocation & weather forecasting service
-├── news.py                   # News API aggregator and narrator
+├── news.py                   # RSS headline aggregator and speech reader
 ├── diction.py                # Intelligent dictionary & fuzzy search
 ├── OCR.py                    # Optical Character Recognition module
 ├── youtube_downloader.py     # YouTube media fetcher
-├── ui.py                     # Rich terminal styling & visual diagnostics
+├── ui.py                     # Rich terminal styling, diagnostic banners & self-test
 ├── Face-Recognition/         # Computer vision authentication module
-├── requirements.txt          # Python dependencies
-└── config.json               # User preferences & environment configuration
+├── requirements.txt          # Production Python dependencies
+├── .env.example              # Template for API keys and environment variables
+└── config.json               # Persistent user preferences & configuration
 ```
 
 ---
@@ -124,102 +131,120 @@ J.A.R.V.I.S/
 
 ### 1. Prerequisites
 
-- **Python:** 3.8, 3.9, 3.10, or 3.11 recommended.
-- **Microphone & Speaker:** Standard audio I/O devices.
-- **Git:** Version control installed.
+- **Python:** 3.9, 3.10, 3.11, 3.12, or 3.13 recommended.
+- **Audio:** Working microphone and speaker setup.
+- **Gemini API Key:** Free key from [Google AI Studio](https://aistudio.google.com/).
 
 ### 2. Installation
 
-Clone the repository and set up a virtual environment:
+Clone the repository and set up your virtual environment:
 
 ```bash
-# Clone the repository
+# Clone repository
 git clone https://github.com/bunnyvalluri/J.A.R.V.I.S.git
 cd J.A.R.V.I.S
 
 # Create and activate virtual environment
-# On Windows:
+# Windows:
 python -m venv venv
 venv\Scripts\activate
 
-# On macOS / Linux:
+# macOS / Linux:
 python3 -m venv venv
 source venv/bin/activate
 ```
 
-Install the dependencies:
+Install the production dependencies:
 
 ```bash
 pip install -r requirements.txt
 ```
 
 > [!TIP]
-> **Windows Audio Setup:** If you encounter issues installing `PyAudio`, use the included wheel file or install via `pipwin`:
+> **Windows Audio Setup:** If you encounter any installation issues with `PyAudio`, run:
 > ```bash
 > pip install pipwin
 > pipwin install pyaudio
 > ```
-> **Linux (Ubuntu/Debian) Users:** Ensure system audio libraries and speech tools are installed:
+> **Linux (Ubuntu/Debian) Users:** Ensure system audio prerequisites are installed:
 > ```bash
 > sudo apt-get update && sudo apt-get install espeak portaudio19-dev libasound-dev
 > ```
+
+### 3. Environment Configuration
+
+Copy `.env.example` to `.env` and insert your Gemini API Key:
+
+```bash
+cp .env.example .env
+```
+
+Edit `.env`:
+```env
+GEMINI_API_KEY=your_actual_gemini_api_key_here
+```
 
 ---
 
 ## 🎮 Execution Modes
 
-Run J.A.R.V.I.S in your preferred operational mode:
+Run J.A.R.V.I.S with flexible command-line flags tailored to your setup:
 
 ```bash
-# 1. Standard Interactive Mode (Mic Voice + Fast Terminal Input)
+# 1. Standard Hybrid Mode (Microphone Voice + Terminal Command Input)
 python jarvis.py
 
-# 2. Text-Only Mode (Console input only, no microphone listening)
+# 2. Text-Only Mode (Keyboard input only — ideal for quiet environments)
 python jarvis.py --text
 
-# 3. Voice-Only Mode (Hands-free voice recognition)
+# 3. Voice-Only Mode (Hands-free continuous microphone recognition)
 python jarvis.py --voice
 
-# 4. Persona Selection
-python jarvis.py --friday   # Starts with female assistant persona
-python jarvis.py --jarvis   # Starts with male assistant persona
+# 4. Persona Preset (Launch directly with F.R.I.D.A.Y. female voice profile)
+python jarvis.py --friday
+
+# 5. Non-Interactive Command Test (Executes a single instruction and exits)
+python jarvis.py --test "what is the time"
+python jarvis.py --test "cpu status"
 ```
 
 ---
 
 ## 📖 Command Reference
 
-J.A.R.V.I.S understands natural queries. Here are some of the most common commands:
+J.A.R.V.I.S understands natural queries across 40+ built-in intents, falling back seamlessly to **Gemini 2.0 Flash** for open-ended queries:
 
 | Category | Example Voice / Typed Commands | Action Performed |
 | :--- | :--- | :--- |
-| **System** | `cpu status`, `system stats`, `battery` | Reports CPU, Memory, and Battery health |
+| **AI Brain** | `ask jarvis how does quantum computing work`, `explain recursion` | Queries Gemini 2.0 Flash with multi-turn context |
+| **System** | `cpu status`, `system stats`, `battery`, `ram`, `hardware` | Real-time CPU, RAM, Disk, and Power diagnostics |
 | **System** | `take screenshot`, `capture screen` | Saves full screenshot to `Pictures/JARVIS_Screenshots` |
-| **System** | `volume up`, `volume down`, `mute` | Adjusts master system audio |
-| **System** | `lock screen`, `lock workstation` | Secures the operating system session |
+| **System** | `volume up`, `volume down`, `mute`, `unmute` | Adjusts master system audio level |
+| **System** | `lock screen`, `lock workstation`, `lock pc` | Secures the active OS desktop session |
 | **Apps** | `open vscode`, `open code` | Launches Visual Studio Code workspace |
-| **Apps** | `open whatsapp`, `open spotify` | Opens designated desktop/web application |
-| **Apps** | `open calculator`, `open notepad` | Opens native Windows utility tools |
-| **Web & Info** | `wikipedia Albert Einstein` | Retrieves concise Wikipedia summary |
-| **Web & Info** | `search youtube lofi music` | Searches and launches YouTube query |
-| **Web & Info** | `weather in London`, `current weather` | Fetches live weather conditions |
-| **Web & Info** | `latest news`, `news headlines` | Reads top news updates aloud |
-| **Productivity** | `take a note`, `write note <content>` | Stores note into local scratchpad |
-| **Productivity** | `read notes`, `clear notes` | Reads saved notes or wipes history |
-| **Dictionary** | `define serendipity`, `meaning of quantum` | Looks up definitions with fuzzy correction |
-| **Persona** | `switch to friday`, `switch to jarvis` | Changes assistant voice and identity |
-| **General** | `tell me a joke`, `what time is it` | Reads humorous programmer joke or timestamp |
-| **Exit** | `exit`, `quit`, `goodbye`, `shutdown` | Powers down the assistant safely |
+| **Apps** | `open whatsapp`, `open spotify` | Opens native app or web equivalent |
+| **Apps** | `open calculator`, `open notepad`, `open terminal` | Opens native utility and terminal windows |
+| **Web & Info** | `wikipedia James Webb Telescope`, `who is Alan Turing` | Fetches concise 2-sentence Wikipedia summary |
+| **Web & Info** | `play lofi beats on youtube`, `search youtube for python tutorials` | Launches YouTube media stream |
+| **Web & Info** | `search google for quantum physics`, `google weather today` | Opens targeted Google search |
+| **Live Data** | `what is the weather`, `current temperature`, `weather in Tokyo` | Reports hyper-local weather conditions |
+| **Live Data** | `today's news`, `top headlines` | Reads top curated RSS news updates aloud |
+| **Productivity** | `remember that meeting is at 4 PM`, `note down project deadline` | Stores timestamped entry to JSON memory |
+| **Productivity** | `read notes`, `what did i ask you to remember`, `clear notes` | Reads recent entries or wipes scratchpad |
+| **Dictionary** | `define serendipity`, `meaning of juxtapose` | Looks up word definition with fuzzy correction |
+| **Persona** | `switch to friday`, `switch to jarvis`, `female voice`, `male voice` | Changes assistant voice and identity on the fly |
+| **Utility** | `what time is it`, `today's date`, `my ip`, `tell me a joke` | Timestamp, local IP address, or programmer joke |
+| **Exit** | `exit`, `quit`, `shutdown`, `goodbye`, `sleep` | Reports session duration and powers down |
 
 ---
 
 ## ⚙️ Configuration
 
-Custom settings can be modified anytime in `config.json`:
+Custom system settings are managed and validated automatically through `config.json`:
 
 ```json
 {
-    "user_name": "Sir",
+    "user_name": "Vallu",
     "assistant_name": "JARVIS",
     "voice_gender": "male",
     "speech_rate": 180,
@@ -228,50 +253,62 @@ Custom settings can be modified anytime in `config.json`:
     "default_mode": "hybrid",
     "weather_city": "auto",
     "news_source": "google",
-    "browser": "auto"
+    "browser": "auto",
+    "llm_enabled": true,
+    "max_news_headlines": 4,
+    "log_level": "INFO"
 }
 ```
 
 ---
 
-## 📸 Media & Showcase
+## 📊 Logging & Diagnostics
 
-<div align="center">
-  <table>
-    <tr>
-      <td align="center" width="50%">
-        <img src="images/Screenshot%20(138).png" alt="Console Interface" width="100%"/>
-        <br/><b>Interactive Diagnostic Terminal</b>
-      </td>
-      <td align="center" width="50%">
-        <img src="images/face-600x900.png" alt="Face Recognition" width="100%"/>
-        <br/><b>Computer Vision & Facial Recognition</b>
-      </td>
-    </tr>
-    <tr>
-      <td align="center" width="50%">
-        <img src="images/email.jpg" alt="Email Automation" width="100%"/>
-        <br/><b>Automated Email Pipeline</b>
-      </td>
-      <td align="center" width="50%">
-        <img src="canny.jpg" alt="Image Processing" width="100%"/>
-        <br/><b>Image Processing & Edge Detection</b>
-      </td>
-    </tr>
-  </table>
-</div>
+### Pre-Flight Self-Test
+On startup, J.A.R.V.I.S executes a rapid self-test validating the operational status of all subsystems:
+
+```
+════════════════════════════════════════════════════════════════════════
+                         J . A . R . V . I . S
+                 Just A Rather Very Intelligent System
+────────────────────────────────────────────────────────────────────────
+  Version : 2.0 Pro          User    : Vallu
+  Session : 05FE8538         Started : 2026-08-19  15:00:47
+  Runtime : Python 3.13.5    Host    : VD
+────────────────────────────────────────────────────────────────────────
+[STARTUP SELF-TEST]
+  [OK]  Voice Engine
+  [OK]  Microphone
+  [OK]  Weather Service
+  [OK]  News Feed
+  [OK]  Dictionary
+  [OK]  Gemini AI Brain         Gemini API key found
+  [OK]  Log System
+────────────────────────────────────────────────────────────────────────
+```
+
+### Rotating File Logs
+All commands, route resolutions, and error diagnostics are recorded in `logs/jarvis_YYYYMMDD.log`:
+
+```log
+[2026-08-19 15:00:47] [05FE8538] [INF] [jarvis:175] Session 05FE8538 started — mode=hybrid, user=Vallu
+[2026-08-19 15:00:52] [05FE8538] [INF] [jarvis:135] Command matched → _cmd_sysinfo  query='cpu status'
+[2026-08-19 15:01:05] [05FE8538] [INF] [ai_brain:75] GeminiBrain: Querying Gemini — 'explain quantum computing'
+```
 
 ---
 
-## 🗺️ Roadmap & Upcoming Features
+## 🗺️ Roadmap
 
 - [x] Hybrid Voice + Console interaction engine
 - [x] Configurable assistant personas (J.A.R.V.I.S / F.R.I.D.A.Y)
-- [x] Comprehensive system diagnostic dashboard
-- [ ] Large Language Model (LLM) Integration (OpenAI / Gemini / Ollama)
-- [ ] Offline Wake-Word Detection (e.g. Porcupine / Snowboy)
+- [x] Priority Command Registry with 40+ intent handlers
+- [x] Large Language Model integration with **Google Gemini 2.0 Flash**
+- [x] Daily rotating session logger with UUID tracking
+- [x] Timestamped JSON notes engine
+- [ ] Offline Wake-Word Detection (e.g., OpenWakeWord / Porcupine)
 - [ ] Smart Home / IoT Device Control via MQTT & Home Assistant
-- [ ] Cross-platform GUI Dashboard (PyQt6 / Electron)
+- [ ] Cross-Platform GUI Dashboard (Electron / PyQt6)
 
 ---
 

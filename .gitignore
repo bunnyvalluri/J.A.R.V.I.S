@@ -104,14 +104,22 @@ celerybeat.pid
 # SageMath parsed files
 *.sage.py
 
-# Environments
+# Environments & Secrets
 .env
+.env.*
+!.env.example
+.vault.json
 .venv
 env/
 venv/
 ENV/
 env.bak/
 venv.bak/
+
+# Runtime data & logs
+logs/
+*.log
+notes.json
 
 # Spyder project settings
 .spyderproject
