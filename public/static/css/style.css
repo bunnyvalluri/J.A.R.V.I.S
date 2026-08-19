@@ -209,28 +209,42 @@ html, body {
 .brand-title {
   display: flex;
   flex-direction: column;
+  justify-content: center;
   min-width: 0;
+  gap: 1px;
 }
 
 .brand-title h1 {
-  font-family: var(--font-orbitron);
-  font-size: clamp(0.92rem, 2.2vw, 1.12rem);
-  font-weight: 900;
-  letter-spacing: 1.5px;
+  font-family: var(--font-brand);
+  font-size: clamp(0.95rem, 2.2vw, 1.18rem);
+  font-weight: 800;
+  letter-spacing: 1.8px;
   color: var(--text-highlight);
-  text-shadow: 0 0 8px var(--cyan-glow);
+  text-shadow: 0 0 10px var(--cyan-glow);
   white-space: nowrap;
   line-height: 1.1;
 }
 
 .brand-subtitle {
   font-family: var(--font-mono);
-  font-size: 0.6rem;
+  font-size: 0.58rem;
+  font-weight: 600;
   color: var(--cyan-core);
   letter-spacing: 0.6px;
-  opacity: 0.85;
-  white-space: nowrap;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
   line-height: 1;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+  width: fit-content;
+}
+
+.brand-subtitle:hover,
+.brand-subtitle.creator-link:hover {
+  color: #ffffff;
+  text-shadow: 0 0 8px var(--cyan-core);
 }
 
 .header-center {
@@ -1746,13 +1760,21 @@ button.hud-btn.hud-btn-icon:hover,
     height: 24px;
   }
 
+  .brand-title {
+    gap: 1px;
+  }
+
   .brand-title h1 {
-    font-size: 0.92rem;
-    letter-spacing: 1px;
+    font-size: 0.88rem;
+    letter-spacing: 1.2px;
+    line-height: 1;
   }
 
   .brand-subtitle {
-    display: none !important;
+    display: inline-flex !important;
+    font-size: 0.52rem;
+    letter-spacing: 0.4px;
+    line-height: 1;
   }
 
   .header-center {
