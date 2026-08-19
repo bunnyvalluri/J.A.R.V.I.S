@@ -812,6 +812,43 @@ button.hud-btn.hud-btn-icon:hover,
   color: var(--text-main);
 }
 
+/* ── Thinking / Loading Indicator in Terminal ────────────────────────────── */
+.thinking-bubble {
+  border-left: 2px solid var(--cyan-core);
+}
+
+.thinking-dots {
+  display: inline-flex;
+  gap: 4px;
+  align-items: center;
+  padding: 4px 0;
+}
+
+.thinking-dots span {
+  width: 6px;
+  height: 6px;
+  background: var(--cyan-core);
+  border-radius: 50%;
+  box-shadow: 0 0 6px var(--cyan-core);
+  animation: blink-dot 1.2s infinite ease-in-out both;
+}
+
+.thinking-dots span:nth-child(1) { animation-delay: 0s; }
+.thinking-dots span:nth-child(2) { animation-delay: 0.2s; }
+.thinking-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes blink-dot {
+  0%, 80%, 100% { opacity: 0.2; transform: scale(0.7); }
+  40% { opacity: 1; transform: scale(1.3); box-shadow: 0 0 10px var(--cyan-core); }
+}
+
+/* ── Hardware Acceleration for Smooth Zero-Lag Typing ───────────────────── */
+.input-wrapper input {
+  transform: translateZ(0);
+  -webkit-appearance: none;
+  appearance: none;
+}
+
 /* Quick Chips */
 .quick-chips {
   display: flex;

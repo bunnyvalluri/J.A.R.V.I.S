@@ -509,7 +509,11 @@
         break;
 
       case 'command_result':
-        appendMessage('user', msg.query, 'COMMAND');
+        removeThinkingBubble();
+        if (!state.lastSentQuery || state.lastSentQuery !== msg.query) {
+          appendMessage('user', msg.query, 'COMMAND');
+        }
+        state.lastSentQuery = null;
         appendMessage('assistant', msg.result.text, (msg.result.category || 'SYSTEM').toUpperCase());
         speakInBrowser(msg.result.spoken || msg.result.text);
         if (msg.result && msg.result.data && msg.result.data.url) {
@@ -517,6 +521,34 @@
         }
         break;
     }
+  }
+
+  // ── Thinking Indicator Bubble ──────────────────────────────────────────────
+  function showThinkingBubble() {
+    removeThinkingBubble();
+    if (!dom.chatStream) return;
+    const bubble = document.createElement('div');
+    bubble.className = 'message-bubble assistant thinking-bubble';
+    bubble.id = 'thinkingBubble';
+    const authorName = (state.telemetry && state.telemetry.assistant_name) || 'J.A.R.V.I.S.';
+    bubble.innerHTML = `
+      <div class="msg-meta">
+        <span class="msg-author">${escapeHtml(authorName)}</span>
+        <span class="msg-category">PROCESSING</span>
+      </div>
+      <div class="msg-content">
+        <div class="thinking-dots">
+          <span></span><span></span><span></span>
+        </div>
+      </div>
+    `;
+    dom.chatStream.appendChild(bubble);
+    dom.chatStream.scrollTop = dom.chatStream.scrollHeight;
+  }
+
+  function removeThinkingBubble() {
+    const bubble = document.getElementById('thinkingBubble');
+    if (bubble) bubble.remove();
   }
 
   // ── Telemetry UI Updating ──────────────────────────────────────────────────
@@ -591,15 +623,21 @@
       .replace(/"/g, '&quot;');
   }
 
-  // ── Command Dispatcher ─────────────────────────────────────────────────────
+  // ── Instant Command Dispatcher ─────────────────────────────────────────────
   async function sendCommand(query) {
     if (!query || !query.trim()) return;
     const cleanQuery = query.trim();
-    if (dom.cmdInput) dom.cmdInput.value = '';
+    if (dom.cmdInput) {
+      dom.cmdInput.value = '';
+    }
 
+    // Instant Zero-Lag UI Update: append user bubble and thinking indicator immediately
+    appendMessage('user', cleanQuery, 'COMMAND');
+    showThinkingBubble();
     setAssistantState('THINKING');
+    state.lastSentQuery = cleanQuery;
 
-    if (state.ws && state.connected) {
+    if (state.ws && state.connected && state.ws.readyState === WebSocket.OPEN) {
       state.ws.send(JSON.stringify({
         type: 'command',
         query: cleanQuery,
@@ -613,7 +651,8 @@
           body: JSON.stringify({ query: cleanQuery, speak: state.voiceEnabled })
         });
         const data = await resp.json();
-        appendMessage('user', cleanQuery, 'COMMAND');
+        removeThinkingBubble();
+        state.lastSentQuery = null;
         appendMessage('assistant', data.result.text, (data.result.category || 'SYSTEM').toUpperCase());
         speakInBrowser(data.result.spoken || data.result.text);
         if (data.result && data.result.data && data.result.data.url) {
@@ -621,6 +660,8 @@
         }
       } catch (err) {
         console.error('Command API error:', err);
+        removeThinkingBubble();
+        state.lastSentQuery = null;
         appendMessage('assistant', 'Communication link failure, Sir.', 'ERROR');
         setAssistantState('IDLE');
       }
@@ -942,15 +983,22 @@
 
   // ── Input & Chip Event Listeners ───────────────────────────────────────────
   if (dom.btnSend) {
-    dom.btnSend.addEventListener('click', () => {
-      if (dom.cmdInput) sendCommand(dom.cmdInput.value);
+    dom.btnSend.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (dom.cmdInput && dom.cmdInput.value.trim()) {
+        sendCommand(dom.cmdInput.value);
+      }
     });
   }
 
   if (dom.cmdInput) {
     dom.cmdInput.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') {
-        sendCommand(dom.cmdInput.value);
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        const val = dom.cmdInput.value;
+        if (val && val.trim()) {
+          sendCommand(val);
+        }
       }
     });
   }

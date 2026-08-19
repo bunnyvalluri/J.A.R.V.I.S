@@ -152,7 +152,7 @@ async def websocket_endpoint(websocket: WebSocket):
                     speak_flag = msg.get("speak", True)
                     if query:
                         await manager.broadcast_json({"type": "state", "state": "THINKING"})
-                        res = core.execute(query, speak_aloud=speak_flag)
+                        res = await asyncio.to_thread(core.execute, query, speak_aloud=speak_flag)
                         new_state = "SPEAKING" if (speak_flag and res.spoken and voice.enabled) else "IDLE"
                         await manager.broadcast_json({"type": "state", "state": new_state})
                         await manager.broadcast_json({
@@ -187,7 +187,7 @@ async def execute_command(req: CommandRequest) -> Dict[str, Any]:
         raise HTTPException(status_code=400, detail="Query cannot be empty.")
 
     await manager.broadcast_json({"type": "state", "state": "THINKING"})
-    result = core.execute(req.query, speak_aloud=req.speak)
+    result = await asyncio.to_thread(core.execute, req.query, speak_aloud=req.speak)
     new_state = "SPEAKING" if (req.speak and result.spoken and voice.enabled) else "IDLE"
     await manager.broadcast_json({"type": "state", "state": new_state})
 
