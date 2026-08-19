@@ -292,7 +292,27 @@
   // ── State Updates ──────────────────────────────────────────────────────────
   function setAssistantState(newState) {
     state.currentState = newState;
-    if (dom.reactorState) dom.reactorState.textContent = newState;
+    const assistantName = (state.telemetry && state.telemetry.assistant_name) || 'JARVIS';
+
+    if (dom.reactorState) {
+      if (newState === 'IDLE') {
+        dom.reactorState.textContent = assistantName;
+      } else {
+        dom.reactorState.textContent = newState;
+      }
+    }
+
+    if (dom.reactorMode) {
+      if (newState === 'IDLE') {
+        dom.reactorMode.textContent = 'ONLINE • STANDBY';
+      } else if (newState === 'LISTENING') {
+        dom.reactorMode.textContent = 'LISTENING...';
+      } else if (newState === 'THINKING') {
+        dom.reactorMode.textContent = 'PROCESSING...';
+      } else if (newState === 'SPEAKING') {
+        dom.reactorMode.textContent = 'TRANSMITTING...';
+      }
+    }
 
     if (newState === 'SPEAKING' || newState === 'LISTENING') {
       if (dom.waveVisualizer) dom.waveVisualizer.classList.add('active');
@@ -400,6 +420,10 @@
     if (dom.brainLinkStatus) dom.brainLinkStatus.textContent = t.brain_status || 'ONLINE';
     if (dom.systemUptime) dom.systemUptime.textContent = t.uptime || '00:00:00';
     if (dom.currentPersona) dom.currentPersona.textContent = t.persona || 'JARVIS';
+
+    if (state.currentState === 'IDLE' && dom.reactorState) {
+      dom.reactorState.textContent = t.assistant_name || 'JARVIS';
+    }
   }
 
   // ── Chat Terminal Message Rendering ────────────────────────────────────────
