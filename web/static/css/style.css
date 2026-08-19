@@ -33,9 +33,14 @@
   --border-cyan-bright: rgba(0, 240, 255, 0.85);
   --border-glass: rgba(255, 255, 255, 0.1);
 
-  --font-orbitron: 'Orbitron', -apple-system, sans-serif;
-  --font-rajdhani: 'Rajdhani', -apple-system, sans-serif;
-  --font-mono: 'JetBrains Mono', monospace;
+  --font-brand: 'Outfit', -apple-system, sans-serif;
+  --font-display: 'Space Grotesk', -apple-system, sans-serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: 'JetBrains Mono', 'SF Mono', monospace;
+
+  /* Aliases for maximum compatibility */
+  --font-orbitron: 'Outfit', 'Space Grotesk', sans-serif;
+  --font-rajdhani: 'Inter', sans-serif;
 
   --shadow-hud: 0 8px 32px 0 rgba(0, 0, 0, 0.65);
 }
@@ -56,8 +61,11 @@ html, body {
   overflow: hidden;
   background-color: var(--bg-primary);
   color: var(--text-main);
-  font-family: var(--font-rajdhani);
-  line-height: 1.4;
+  font-family: var(--font-body);
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.5;
   -webkit-text-size-adjust: 100%;
 }
 
