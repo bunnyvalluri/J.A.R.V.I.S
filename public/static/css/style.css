@@ -258,6 +258,70 @@ html, body {
   flex-shrink: 0;
 }
 
+/* ── Creator Badge & Link ────────────────────────────────────────────────── */
+.creator-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  background: rgba(0, 240, 255, 0.08);
+  border: 1px solid var(--border-cyan);
+  border-radius: 6px;
+  font-family: var(--font-display);
+  font-size: 0.66rem;
+  font-weight: 700;
+  color: var(--text-highlight);
+  text-decoration: none;
+  letter-spacing: 0.5px;
+  transition: all 0.22s ease;
+  white-space: nowrap;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.creator-badge:hover {
+  background: rgba(0, 240, 255, 0.24);
+  border-color: var(--cyan-core);
+  box-shadow: 0 0 14px var(--cyan-glow);
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+.creator-prefix {
+  font-size: 0.56rem;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-weight: 600;
+}
+
+.creator-name {
+  color: var(--cyan-core);
+  font-weight: 800;
+  text-shadow: 0 0 6px rgba(0, 240, 255, 0.4);
+}
+
+.creator-link {
+  color: var(--cyan-core);
+  text-decoration: none;
+  font-weight: 700;
+  transition: all 0.2s ease;
+}
+
+.creator-link:hover {
+  color: #ffffff;
+  text-shadow: 0 0 8px var(--cyan-glow);
+  text-decoration: underline;
+}
+
+.modal-credit-footer {
+  text-align: center;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  padding-top: 8px;
+  border-top: 1px solid var(--border-glass);
+}
+
 .status-indicator {
   width: 8px;
   height: 8px;
