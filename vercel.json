@@ -1,6 +1,5 @@
 {
   "version": 2,
-  "name": "jarvis",
   "builds": [
     {
       "src": "api/index.py",
