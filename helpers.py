@@ -1,102 +1,145 @@
-import pyttsx3
-import pyautogui
-import psutil
+import json
 import pyjokes
 import speech_recognition as sr
-import json
-import requests
-import geocoder
 from difflib import get_close_matches
+from pathlib import Path
 
+from voice_engine import speak, voice
+from weather_service import get_weather
+from system_control import get_system_stats, take_screenshot, change_volume, lock_screen, get_time_and_date
+from config import DATA_FILE, NOTES_FILE
+from ui import print_listening, print_recognizing, print_user_input, print_jarvis_response, print_info, print_status, WARNING, MUTED
 
-engine = pyttsx3.init()
-voices = engine.getProperty('voices')
-engine.setProperty('voice', voices[0].id)
-g = geocoder.ip('me')
-data = json.load(open('data.json'))
+# Load dictionary data if available
+try:
+    with open(DATA_FILE, "r", encoding="utf-8") as f:
+        data = json.load(f)
+except Exception:
+    data = {}
 
-def speak(audio) -> None:
-        engine.say(audio)
-        engine.runAndWait()
-
-def screenshot() -> None:
-    img = pyautogui.screenshot()
-    img.save('path of folder you want to save/screenshot.png')
-
-def cpu() -> None:
-    usage = str(psutil.cpu_percent())
-    speak("CPU is at"+usage)
-
-    battery = psutil.sensors_battery()
-    speak("battery is at")
-    speak(battery.percent)
-
-def joke() -> None:
-    for i in range(5):
-        speak(pyjokes.get_jokes()[i])
-
-def takeCommand() -> str:
-    r = sr.Recognizer()
-    query = ""
+def joke():
+    """Tell a single humorous joke."""
     try:
-        with sr.Microphone() as source:
-            print('\n[Mic] Listening... (Speak now or wait/press Enter to type)')
-            r.pause_threshold = 1
-            r.energy_threshold = 494
-            r.adjust_for_ambient_noise(source, duration=0.8)
-            audio = r.listen(source, timeout=4, phrase_time_limit=8)
-        print('[Mic] Recognizing...')
-        query = r.recognize_google(audio, language='en-in')
-        print(f'User said (Voice): {query}\n')
-        return query
+        j = pyjokes.get_joke()
+        return j
     except Exception:
-        pass
+        return "Why do programmers prefer dark mode? Because light attracts bugs!"
 
-    try:
-        user_input = input('[Type Command]: ').strip()
-        if user_input:
-            print(f'User said (Text): {user_input}\n')
-            return user_input
-    except Exception:
-        pass
+def cpu():
+    """Report CPU and system stats."""
+    spoken, display = get_system_stats()
+    return spoken
 
-    return 'None'
+def screenshot():
+    """Capture a screenshot."""
+    return take_screenshot()
 
 def weather():
-    try:
-        if g and hasattr(g, 'latlng') and g.latlng:
-            api_url = "https://fcc-weather-api.glitch.me/api/current?lat=" + \
-                str(g.latlng[0]) + "&lon=" + str(g.latlng[1])
-            data = requests.get(api_url, timeout=3)
-            data_json = data.json()
-            if isinstance(data_json, dict) and data_json.get('cod') == 200:
-                main = data_json.get('main', {})
-                wind = data_json.get('wind', {})
-                weather_desc = data_json.get('weather', [{}])[0]
-                speak(str(data_json.get('coord', {}).get('lat', '')) + ' latitude ' + str(data_json.get('coord', {}).get('lon', '')) + ' longitude')
-                speak('Current location is ' + str(data_json.get('name', '')) + ' ' + str(data_json.get('sys', {}).get('country', '')))
-                speak('weather type ' + str(weather_desc.get('main', '')))
-                speak('Wind speed is ' + str(wind.get('speed', '')) + ' metre per second')
-                speak('Temperature: ' + str(main.get('temp', '')) + ' degree celcius')
-                speak('Humidity is ' + str(main.get('humidity', '')))
-    except Exception as e:
-        print(f"[Weather info skipped: {e}]")
+    """Fetch and report weather."""
+    w = get_weather()
+    return w.get("spoken", "Weather data is currently unavailable.")
 
 def translate(word):
-    word = word.lower()
-    if word in data:
-        speak(data[word])
-    elif len(get_close_matches(word, data.keys())) > 0:
-        x = get_close_matches(word, data.keys())[0]
-        speak('Did you mean ' + x +
-              ' instead,  respond with Yes or No.')
-        ans = takeCommand().lower()
-        if 'yes' in ans:
-            speak(data[x])
-        elif 'no' in ans:
-            speak("Word doesn't exist. Please make sure you spelled it correctly.")
-        else:
-            speak("We didn't understand your entry.")
+    """Search for word definition in dictionary."""
+    word = word.lower().strip()
+    if not data:
+        return "Dictionary database is not loaded, Sir."
 
-    else:
-        speak("Word doesn't exist. Please double check it.")
+    if word in data:
+        res = data[word]
+        if isinstance(res, list):
+            res = "; ".join(res)
+        return f"Definition of {word}: {res}"
+    
+    matches = get_close_matches(word, data.keys(), n=1, cutoff=0.7)
+    if matches:
+        match = matches[0]
+        res = data[match]
+        if isinstance(res, list):
+            res = "; ".join(res)
+        return f"I couldn't find '{word}', but '{match}' means: {res}"
+    
+    return f"I couldn't find the definition for '{word}', Sir."
+
+def save_note(note_text):
+    """Save a note to memory."""
+    try:
+        with open(NOTES_FILE, "a", encoding="utf-8") as f:
+            f.write(note_text + "\n")
+        return f"I have noted that down: '{note_text}'."
+    except Exception as e:
+        return f"Failed to save note: {e}"
+
+def read_notes():
+    """Read all saved notes."""
+    if not NOTES_FILE.exists():
+        return "You have not saved any notes yet, Sir."
+    try:
+        with open(NOTES_FILE, "r", encoding="utf-8") as f:
+            lines = [line.strip() for line in f.readlines() if line.strip()]
+        if not lines:
+            return "Your notes list is currently empty, Sir."
+        notes_str = "; ".join(lines[-5:])  # read up to last 5 notes
+        return f"Here are your latest saved notes: {notes_str}."
+    except Exception as e:
+        return f"Failed to read notes: {e}"
+
+def clear_notes():
+    """Clear all saved notes."""
+    try:
+        with open(NOTES_FILE, "w", encoding="utf-8") as f:
+            f.write("")
+        return "All notes have been cleared, Sir."
+    except Exception as e:
+        return f"Failed to clear notes: {e}"
+
+def takeCommand(mode="hybrid"):
+    """
+    Intelligent command capture supporting Voice and Text.
+    mode can be 'hybrid', 'voice', or 'text'.
+    """
+    if mode == "text":
+        try:
+            cmd = input("\n[Type Command]: ").strip()
+            if cmd:
+                print_user_input(cmd, "Text")
+                return cmd
+        except (KeyboardInterrupt, EOFError):
+            raise
+        return ""
+
+    # Try voice recognition
+    r = sr.Recognizer()
+    r.dynamic_energy_threshold = True
+    r.pause_threshold = 0.8
+
+    try:
+        with sr.Microphone() as source:
+            print_listening()
+            r.adjust_for_ambient_noise(source, duration=0.6)
+            audio = r.listen(source, timeout=3.5, phrase_time_limit=7)
+        
+        print_recognizing()
+        query = r.recognize_google(audio, language='en-in')
+        if query:
+            print_user_input(query, "Voice")
+            return query
+    except sr.WaitTimeoutError:
+        pass
+    except sr.UnknownValueError:
+        pass
+    except Exception as e:
+        # If mic fails or is unavailable, fallback gracefully
+        pass
+
+    # In hybrid mode, provide text fallback prompt if mic heard nothing
+    if mode == "hybrid":
+        try:
+            user_input = input("\n[Type Command or Press Enter]: ").strip()
+            if user_input:
+                print_user_input(user_input, "Text")
+                return user_input
+        except (KeyboardInterrupt, EOFError):
+            raise
+
+    return ""

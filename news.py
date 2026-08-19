@@ -1,32 +1,68 @@
-import requests
-import json
-import pyttsx3
-engine = pyttsx3.init()
-voices = engine.getProperty('voices')
-engine.setProperty('voice', voices[0].id)
+import feedparser
+import urllib.parse
+from ui import print_info, print_status, PRIMARY, SUCCESS, MUTED
 
+NEWS_FEEDS = {
+    "top": "https://news.google.com/rss?hl=en-IN&gl=IN&ceid=IN:en",
+    "tech": "https://news.google.com/rss/headlines/section/topic/TECHNOLOGY?hl=en-IN&gl=IN&ceid=IN:en",
+    "world": "https://feeds.bbci.co.uk/news/world/rss.xml",
+    "india": "https://timesofindia.indiatimes.com/rssfeedstopstories.cms"
+}
 
-def speak(audio):
-    engine.say(audio)
-    engine.runAndWait()
+def fetch_headlines(category="top", limit=5):
+    """
+    Fetch live news headlines from RSS feeds.
+    Returns a list of dicts with 'title' and 'link'.
+    """
+    feed_url = NEWS_FEEDS.get(category, NEWS_FEEDS["top"])
+    try:
+        feed = feedparser.parse(feed_url)
+        articles = []
+        for entry in feed.entries[:limit]:
+            title = entry.get("title", "Headline unavailable")
+            # Clean title
+            if " - " in title:
+                title = title.rsplit(" - ", 1)[0]
+            articles.append({
+                "title": title.strip(),
+                "link": entry.get("link", "")
+            })
+        return articles
+    except Exception as e:
+        print_info(f"Failed to fetch RSS news: {e}")
+        return []
 
+def speak_news(speaker_func=None, category="top", limit=4):
+    """
+    Fetch and announce top news headlines.
+    """
+    articles = fetch_headlines(category=category, limit=limit)
+    if not articles:
+        msg = "I am unable to retrieve today's news headlines at the moment, Sir."
+        if speaker_func:
+            speaker_func(msg)
+        return msg, []
 
-def speak_news():
-    url = 'http://newsapi.org/v2/top-headlines?sources=the-times-of-india&apiKey=yourapikey'
-    news = requests.get(url).text
-    news_dict = json.loads(news)
-    arts = news_dict['articles']
-    speak('Source: The Times Of India')
-    speak('Todays Headlines are..')
-    for index, articles in enumerate(arts):
-        speak(articles['title'])
-        if index == len(arts)-1:
-            break
-        speak('Moving on the next news headline..')
-    speak('These were the top headlines, Have a nice day Sir!!..')
+    intro = f"Here are today's top {len(articles)} headlines, Sir:"
+    if speaker_func:
+        speaker_func(intro)
+
+    for i, art in enumerate(articles, 1):
+        headline_text = f"Headline {i}: {art['title']}"
+        print_status("NEWS", f"#{i}: {art['title']}", PRIMARY)
+        if speaker_func:
+            speaker_func(art['title'])
+
+    outro = "Those were the top headlines."
+    if speaker_func:
+        speaker_func(outro)
+
+    return intro, articles
 
 def getNewsUrl():
-    return 'http://newsapi.org/v2/top-headlines?sources=the-times-of-india&apiKey=yourapikey'
+    return "https://news.google.com"
 
 if __name__ == '__main__':
-    speak_news()
+    arts = fetch_headlines()
+    for i, a in enumerate(arts, 1):
+        print(f"{i}. {a['title']}")

@@ -1,0 +1,12 @@
+{
+    "user_name": "Vallu",
+    "assistant_name": "JARVIS",
+    "voice_gender": "male",
+    "speech_rate": 180,
+    "speech_volume": 1.0,
+    "voice_enabled": true,
+    "default_mode": "hybrid",
+    "weather_city": "auto",
+    "news_source": "google",
+    "browser": "auto"
+}
