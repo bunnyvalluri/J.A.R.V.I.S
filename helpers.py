@@ -37,42 +37,50 @@ def joke() -> None:
 
 def takeCommand() -> str:
     r = sr.Recognizer()
-    with sr.Microphone() as source:
-        print('Listening...')
-        r.pause_threshold = 1
-        r.energy_threshold = 494
-        r.adjust_for_ambient_noise(source, duration=1.5)
-        audio = r.listen(source)
+    query = ""
+    try:
+        with sr.Microphone() as source:
+            print('\n[Mic] Listening... (Speak now or wait/press Enter to type)')
+            r.pause_threshold = 1
+            r.energy_threshold = 494
+            r.adjust_for_ambient_noise(source, duration=0.8)
+            audio = r.listen(source, timeout=4, phrase_time_limit=8)
+        print('[Mic] Recognizing...')
+        query = r.recognize_google(audio, language='en-in')
+        print(f'User said (Voice): {query}\n')
+        return query
+    except Exception:
+        pass
 
     try:
-        print('Recognizing..')
-        query = r.recognize_google(audio, language='en-in')
-        print(f'User said: {query}\n')
+        user_input = input('[Type Command]: ').strip()
+        if user_input:
+            print(f'User said (Text): {user_input}\n')
+            return user_input
+    except Exception:
+        pass
 
-    except Exception as e:
-        # print(e)
-
-        print('Say that again please...')
-        return 'None'
-    return query
+    return 'None'
 
 def weather():
-    api_url = "https://fcc-weather-api.glitch.me/api/current?lat=" + \
-        str(g.latlng[0]) + "&lon=" + str(g.latlng[1])
-
-    data = requests.get(api_url)
-    data_json = data.json()
-    if data_json['cod'] == 200:
-        main = data_json['main']
-        wind = data_json['wind']
-        weather_desc = data_json['weather'][0]
-        speak(str(data_json['coord']['lat']) + 'latitude' + str(data_json['coord']['lon']) + 'longitude')
-        speak('Current location is ' + data_json['name'] + data_json['sys']['country'] + 'dia')
-        speak('weather type ' + weather_desc['main'])
-        speak('Wind speed is ' + str(wind['speed']) + ' metre per second')
-        speak('Temperature: ' + str(main['temp']) + 'degree celcius')
-        speak('Humidity is ' + str(main['humidity']))
-
+    try:
+        if g and hasattr(g, 'latlng') and g.latlng:
+            api_url = "https://fcc-weather-api.glitch.me/api/current?lat=" + \
+                str(g.latlng[0]) + "&lon=" + str(g.latlng[1])
+            data = requests.get(api_url, timeout=3)
+            data_json = data.json()
+            if isinstance(data_json, dict) and data_json.get('cod') == 200:
+                main = data_json.get('main', {})
+                wind = data_json.get('wind', {})
+                weather_desc = data_json.get('weather', [{}])[0]
+                speak(str(data_json.get('coord', {}).get('lat', '')) + ' latitude ' + str(data_json.get('coord', {}).get('lon', '')) + ' longitude')
+                speak('Current location is ' + str(data_json.get('name', '')) + ' ' + str(data_json.get('sys', {}).get('country', '')))
+                speak('weather type ' + str(weather_desc.get('main', '')))
+                speak('Wind speed is ' + str(wind.get('speed', '')) + ' metre per second')
+                speak('Temperature: ' + str(main.get('temp', '')) + ' degree celcius')
+                speak('Humidity is ' + str(main.get('humidity', '')))
+    except Exception as e:
+        print(f"[Weather info skipped: {e}]")
 
 def translate(word):
     word = word.lower()

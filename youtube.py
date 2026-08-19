@@ -8,15 +8,20 @@ if platform == "linux" or platform == "linux2":
     chrome_path = '/usr/bin/google-chrome'
 
 elif platform == "darwin":
-    chrome_path = 'open -a /Applications/Google\ Chrome.app'
+    chrome_path = 'open -a /Applications/Google\\ Chrome.app'
 
 elif platform == "win32":
-    chrome_path = 'C:\Program Files (x86)\Google\Chrome\Application\chrome.exe'
+    p1 = r'C:\Program Files\Google\Chrome\Application\chrome.exe'
+    p2 = r'C:\Program Files (x86)\Google\Chrome\Application\chrome.exe'
+    chrome_path = p1 if os.path.exists(p1) else p2
 else:
     print('Unsupported OS')
     exit(1)
 
-webbrowser.register('chrome', None, webbrowser.BackgroundBrowser(chrome_path))
+try:
+    webbrowser.register('chrome', None, webbrowser.BackgroundBrowser(chrome_path))
+except Exception:
+    pass
 
 
 def youtube(textToSearch):
