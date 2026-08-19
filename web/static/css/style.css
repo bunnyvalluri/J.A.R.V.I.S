@@ -1,6 +1,6 @@
 /* ══════════════════════════════════════════════════════════════════════════════
    J.A.R.V.I.S. — Production Holographic HUD Design System
-   Pixel-Perfect High-Visibility Multi-Screen Layout
+   Pixel-Perfect High-Visibility Multi-Screen & Fully Responsive Layout
    ══════════════════════════════════════════════════════════════════════════════ */
 
 :root {
@@ -51,11 +51,14 @@
 html, body {
   width: 100%;
   height: 100%;
+  min-height: 100vh;
+  min-height: 100dvh;
   overflow: hidden;
   background-color: var(--bg-primary);
   color: var(--text-main);
   font-family: var(--font-rajdhani);
   line-height: 1.4;
+  -webkit-text-size-adjust: 100%;
 }
 
 /* ── Background Cyber Grid & Glow Orbs ───────────────────────────────────── */
@@ -118,13 +121,19 @@ html, body {
   z-index: 1;
   display: flex;
   flex-direction: column;
+  width: 100%;
+  max-width: 1920px;
   height: 100vh;
   height: 100dvh;
-  padding: 10px 14px;
-  gap: 10px;
-  max-width: 1920px;
+  padding: 8px 12px;
+  padding-top: max(8px, env(safe-area-inset-top));
+  padding-bottom: max(8px, env(safe-area-inset-bottom));
+  padding-left: max(12px, env(safe-area-inset-left));
+  padding-right: max(12px, env(safe-area-inset-right));
+  gap: 8px;
   margin: 0 auto;
   overflow: hidden;
+  box-sizing: border-box;
 }
 
 /* ── Glass Panel ─────────────────────────────────────────────────────────── */
@@ -148,24 +157,25 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 8px 14px;
+  padding: 6px 12px;
   flex-shrink: 0;
-  gap: 10px;
-  min-height: 52px;
+  gap: 8px;
+  min-height: 46px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .header-left {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   flex-shrink: 0;
-  min-width: 0;
 }
 
 .reactor-mini-icon {
   position: relative;
-  width: 28px;
-  height: 28px;
+  width: 26px;
+  height: 26px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -181,8 +191,8 @@ html, body {
 }
 
 .reactor-mini-icon .core-dot {
-  width: 9px;
-  height: 9px;
+  width: 8px;
+  height: 8px;
   background: var(--cyan-core);
   border-radius: 50%;
   box-shadow: 0 0 8px var(--cyan-core);
@@ -196,9 +206,9 @@ html, body {
 
 .brand-title h1 {
   font-family: var(--font-orbitron);
-  font-size: 1.12rem;
+  font-size: clamp(0.92rem, 2.2vw, 1.12rem);
   font-weight: 900;
-  letter-spacing: 2px;
+  letter-spacing: 1.5px;
   color: var(--text-highlight);
   text-shadow: 0 0 8px var(--cyan-glow);
   white-space: nowrap;
@@ -207,9 +217,9 @@ html, body {
 
 .brand-subtitle {
   font-family: var(--font-mono);
-  font-size: 0.62rem;
+  font-size: 0.6rem;
   color: var(--cyan-core);
-  letter-spacing: 0.8px;
+  letter-spacing: 0.6px;
   opacity: 0.85;
   white-space: nowrap;
   line-height: 1;
@@ -218,23 +228,26 @@ html, body {
 .header-center {
   display: flex;
   align-items: center;
-  gap: 8px;
-  flex-shrink: 0;
+  justify-content: center;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
 }
 
 .hud-status-badge {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 5px 12px;
+  padding: 4px 10px;
   background: rgba(0, 240, 255, 0.1);
   border: 1px solid var(--border-cyan);
   border-radius: 20px;
   font-family: var(--font-orbitron);
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   font-weight: 700;
-  letter-spacing: 0.8px;
+  letter-spacing: 0.6px;
   white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .status-indicator {
@@ -262,18 +275,18 @@ html, body {
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 4px 10px;
+  padding: 4px 8px;
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid var(--border-glass);
   border-radius: 6px;
-  font-size: 0.74rem;
+  font-size: 0.72rem;
   white-space: nowrap;
 }
 
 .pill-label {
   color: var(--text-muted);
   font-weight: 600;
-  font-size: 0.64rem;
+  font-size: 0.62rem;
 }
 
 .pill-value {
@@ -285,13 +298,14 @@ html, body {
 .header-right {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   flex-shrink: 0;
+  margin-left: auto;
 }
 
 .clock-display {
   font-family: var(--font-mono);
-  font-size: 0.92rem;
+  font-size: 0.88rem;
   font-weight: 700;
   color: var(--cyan-core);
   text-shadow: 0 0 8px var(--cyan-glow);
@@ -299,23 +313,32 @@ html, body {
 }
 
 /* ── High-Visibility Header Action Buttons ───────────────────────────────── */
+button.hud-btn.hud-btn-icon,
+.hud-btn.hud-btn-icon,
 .hud-btn-icon {
-  width: 40px;
-  height: 40px;
-  padding: 0;
+  width: 38px !important;
+  height: 38px !important;
+  min-width: 38px !important;
+  min-height: 38px !important;
+  max-width: 38px !important;
+  max-height: 38px !important;
+  padding: 0 !important;
   border-radius: 8px;
   background: rgba(0, 240, 255, 0.14);
   border: 1.5px solid var(--border-cyan);
   color: var(--cyan-core);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
   cursor: pointer;
   transition: all 0.22s ease;
-  flex-shrink: 0;
+  flex-shrink: 0 !important;
   box-shadow: 0 0 10px rgba(0, 240, 255, 0.15);
+  box-sizing: border-box !important;
 }
 
+button.hud-btn.hud-btn-icon:hover,
+.hud-btn.hud-btn-icon:hover,
 .hud-btn-icon:hover {
   background: rgba(0, 240, 255, 0.3);
   border-color: var(--cyan-core);
@@ -324,17 +347,23 @@ html, body {
   transform: translateY(-1px);
 }
 
+.hud-btn-icon svg,
 .hud-btn-icon svg.icon {
-  width: 22px;
-  height: 22px;
+  width: 20px !important;
+  height: 20px !important;
+  min-width: 20px !important;
+  min-height: 20px !important;
   stroke: currentColor;
   stroke-width: 2.2;
+  display: block !important;
+  flex-shrink: 0 !important;
   filter: drop-shadow(0 0 4px var(--cyan-glow));
 }
 
 /* ── Mobile / Tablet Navigation Switcher Tabs ────────────────────────────── */
 .hud-mobile-nav {
   display: none;
+  grid-template-columns: repeat(5, 1fr);
   gap: 4px;
   padding: 4px;
   background: rgba(10, 18, 38, 0.92);
@@ -342,32 +371,41 @@ html, body {
   border-radius: 8px;
   flex-shrink: 0;
   width: 100%;
+  box-sizing: border-box;
 }
 
 .mobile-tab-btn {
-  flex: 1;
-  padding: 7px 4px;
+  padding: 6px 2px;
   background: transparent;
   border: 1px solid transparent;
   border-radius: 6px;
   color: var(--text-muted);
   font-family: var(--font-orbitron);
-  font-size: 0.65rem;
+  font-size: clamp(0.55rem, 1.8vw, 0.65rem);
   font-weight: 700;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.3px;
   cursor: pointer;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 3px;
+  gap: 2px;
   transition: all 0.2s ease;
   white-space: nowrap;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .mobile-tab-btn .tab-icon {
-  font-size: 1.05rem;
+  font-size: 1rem;
   line-height: 1;
+}
+
+.mobile-tab-btn .tab-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
 }
 
 .mobile-tab-btn.active, .mobile-tab-btn:hover {
@@ -380,11 +418,13 @@ html, body {
 /* ── Cockpit Grid Framework (Desktop) ────────────────────────────────────── */
 .hud-main {
   display: grid;
-  grid-template-columns: 280px 1fr 300px;
+  grid-template-columns: minmax(240px, 280px) 1fr minmax(260px, 300px);
   gap: 10px;
   flex: 1;
   min-height: 0;
   overflow: hidden;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .hud-wing {
@@ -446,6 +486,7 @@ html, body {
   gap: 8px;
   overflow-y: auto;
   min-height: 0;
+  -webkit-overflow-scrolling: touch;
 }
 
 /* ── Left Wing: Telemetry ────────────────────────────────────────────────── */
@@ -597,7 +638,7 @@ html, body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 8px 12px;
+  padding: 6px 10px;
   position: relative;
   overflow: hidden;
   flex-shrink: 0;
@@ -606,8 +647,8 @@ html, body {
 .reactor-wrapper {
   position: relative;
   width: 100%;
-  max-width: 220px;
-  height: 150px;
+  max-width: 180px;
+  height: 110px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -631,23 +672,25 @@ html, body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 1px;
 }
 
 .reactor-state-title {
   font-family: var(--font-orbitron);
-  font-size: 1.05rem;
+  font-size: 0.95rem;
   font-weight: 900;
   letter-spacing: 2px;
   color: var(--cyan-core);
   text-shadow: 0 0 12px var(--cyan-core);
-  line-height: 1.2;
+  line-height: 1.1;
 }
 
 .reactor-mode-label {
   font-family: var(--font-mono);
-  font-size: 0.65rem;
+  font-size: 0.58rem;
   color: var(--text-muted);
-  letter-spacing: 1px;
+  letter-spacing: 0.8px;
+  line-height: 1;
 }
 
 .wave-visualizer {
@@ -655,9 +698,9 @@ html, body {
   align-items: flex-end;
   justify-content: center;
   gap: 3px;
-  height: 16px;
-  width: 180px;
-  margin-top: 4px;
+  height: 12px;
+  width: 150px;
+  margin-top: 2px;
 }
 
 .wave-bar {
@@ -696,7 +739,7 @@ html, body {
 .chat-stream {
   flex: 1;
   overflow-y: auto;
-  padding: 10px 14px;
+  padding: 8px 12px;
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -773,12 +816,16 @@ html, body {
 .quick-chips {
   display: flex;
   gap: 6px;
-  padding: 6px 12px;
+  padding: 6px 10px;
   overflow-x: auto;
   border-top: 1px solid var(--border-glass);
   scrollbar-width: none;
   -webkit-overflow-scrolling: touch;
   flex-shrink: 0;
+  width: 100%;
+  box-sizing: border-box;
+  mask-image: linear-gradient(to right, transparent 0%, black 10px, black calc(100% - 10px), transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 10px, black calc(100% - 10px), transparent 100%);
 }
 
 .quick-chips::-webkit-scrollbar {
@@ -797,6 +844,7 @@ html, body {
   white-space: nowrap;
   transition: all 0.2s ease;
   min-height: 28px;
+  flex-shrink: 0;
 }
 
 .chip-btn:hover {
@@ -809,17 +857,19 @@ html, body {
 .hud-input-bar {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 12px;
-  background: rgba(0, 0, 0, 0.35);
+  gap: 6px;
+  padding: 6px 10px;
+  background: rgba(0, 0, 0, 0.45);
   border-top: 1px solid var(--border-cyan);
   flex-shrink: 0;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .mic-btn {
   position: relative;
-  width: 42px;
-  height: 42px;
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
   background: rgba(0, 240, 255, 0.14);
   border: 1.5px solid var(--border-cyan);
@@ -840,8 +890,8 @@ html, body {
 }
 
 .mic-btn svg {
-  width: 22px;
-  height: 22px;
+  width: 20px;
+  height: 20px;
   stroke-width: 2.2;
 }
 
@@ -875,13 +925,13 @@ html, body {
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid var(--border-glass);
   border-radius: 6px;
-  padding: 7px 12px;
+  padding: 6px 10px;
   color: #fff;
   font-family: var(--font-rajdhani);
-  font-size: 0.92rem;
+  font-size: clamp(0.82rem, 2vw, 0.92rem);
   outline: none;
   transition: all 0.2s ease;
-  min-height: 40px;
+  min-height: 38px;
 }
 
 .input-wrapper input:focus {
@@ -891,8 +941,8 @@ html, body {
 }
 
 .send-btn {
-  width: 42px;
-  height: 42px;
+  width: 38px;
+  height: 38px;
   border-radius: 8px;
   background: var(--cyan-core);
   border: none;
@@ -912,8 +962,8 @@ html, body {
 }
 
 .send-btn svg {
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
   stroke-width: 2.5;
 }
 
@@ -1168,13 +1218,14 @@ html, body {
 
 .hud-modal {
   width: 440px;
-  max-width: 100%;
-  max-height: 90vh;
+  max-width: calc(100vw - 24px);
+  max-height: calc(100dvh - 32px);
   background: var(--bg-secondary);
   border: 1px solid var(--border-cyan-bright);
   border-radius: 10px;
   box-shadow: 0 0 28px var(--cyan-glow);
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .modal-header {
@@ -1410,7 +1461,7 @@ html, body {
 
 @keyframes wave-bounce {
   0% { height: 3px; }
-  100% { height: 16px; }
+  100% { height: 14px; }
 }
 
 @keyframes fade-slide-up {
@@ -1422,6 +1473,40 @@ html, body {
    RESPONSIVE BREAKPOINTS (Mobile, Tablet, Laptop, Desktop)
    ══════════════════════════════════════════════════════════════════════════ */
 
+/* ── Large Desktop / Ultra-Wide Displays (>= 1440px) ─────────────────────── */
+@media (min-width: 1440px) {
+  .hud-main {
+    grid-template-columns: 290px 1fr 310px;
+    gap: 12px;
+  }
+  .reactor-wrapper {
+    max-width: 220px;
+    height: 140px;
+  }
+  .reactor-state-title {
+    font-size: 1.1rem;
+  }
+  .wave-visualizer {
+    height: 16px;
+    width: 180px;
+  }
+}
+
+/* ── Standard Laptop / Medium Desktop (1024px - 1439px) ──────────────────── */
+@media (min-width: 1024px) and (max-width: 1439px) {
+  .hud-main {
+    grid-template-columns: 250px 1fr 270px;
+    gap: 8px;
+  }
+  .reactor-wrapper {
+    max-width: 170px;
+    height: 105px;
+  }
+  .launcher-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
 /* ── Tablets & Mobile Devices (< 1024px) ─────────────────────────────────── */
 @media (max-width: 1023px) {
   .hide-on-mobile {
@@ -1429,7 +1514,7 @@ html, body {
   }
 
   .hud-mobile-nav {
-    display: flex !important;
+    display: grid !important;
   }
 
   .hud-main {
@@ -1438,6 +1523,7 @@ html, body {
     flex: 1;
     min-height: 0;
     overflow: hidden;
+    width: 100%;
   }
 
   .hud-wing, .hud-stage {
@@ -1449,6 +1535,7 @@ html, body {
     -webkit-overflow-scrolling: touch;
   }
 
+  /* Active Views via Switcher */
   .hud-main.view-stage #centerStage {
     display: flex !important;
     flex: 1;
@@ -1514,12 +1601,12 @@ html, body {
   }
 
   .launcher-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
   }
 
   .reactor-wrapper {
-    height: 130px;
-    max-width: 180px;
+    height: 100px;
+    max-width: 150px;
   }
 }
 
@@ -1527,15 +1614,31 @@ html, body {
 @media (max-width: 600px) {
   .hud-container {
     padding: 6px 8px;
+    padding-top: max(6px, env(safe-area-inset-top));
+    padding-bottom: max(6px, env(safe-area-inset-bottom));
+    padding-left: max(8px, env(safe-area-inset-left));
+    padding-right: max(8px, env(safe-area-inset-right));
     gap: 6px;
   }
 
   .hud-header {
-    padding: 6px 10px;
+    padding: 4px 8px;
+    min-height: 40px;
+    gap: 6px;
+  }
+
+  .header-left {
+    gap: 6px;
+    flex-shrink: 0;
+  }
+
+  .reactor-mini-icon {
+    width: 24px;
+    height: 24px;
   }
 
   .brand-title h1 {
-    font-size: 1rem;
+    font-size: 0.92rem;
     letter-spacing: 1px;
   }
 
@@ -1543,84 +1646,259 @@ html, body {
     display: none !important;
   }
 
+  .header-center {
+    flex: 1;
+    min-width: 0;
+    justify-content: center;
+  }
+
   .hud-status-badge {
-    padding: 4px 8px;
-    font-size: 0.65rem;
+    padding: 3px 8px;
+    font-size: 0.62rem;
+    letter-spacing: 0.4px;
+    gap: 4px;
   }
 
+  .header-right {
+    gap: 6px;
+    flex-shrink: 0;
+  }
+
+  button.hud-btn.hud-btn-icon,
+  .hud-btn.hud-btn-icon,
   .hud-btn-icon {
-    width: 36px;
-    height: 36px;
+    width: 34px !important;
+    height: 34px !important;
+    min-width: 34px !important;
+    min-height: 34px !important;
+    max-width: 34px !important;
+    max-height: 34px !important;
+    padding: 0 !important;
+    border-radius: 6px;
   }
 
+  .hud-btn-icon svg,
   .hud-btn-icon svg.icon {
-    width: 20px;
-    height: 20px;
-    stroke-width: 2.2;
+    width: 18px !important;
+    height: 18px !important;
+    min-width: 18px !important;
+    min-height: 18px !important;
+  }
+
+  .hud-mobile-nav {
+    padding: 3px;
+    gap: 3px;
+    border-radius: 6px;
   }
 
   .mobile-tab-btn {
-    padding: 6px 2px;
-    font-size: 0.6rem;
+    padding: 5px 1px;
+    font-size: 0.58rem;
   }
 
   .mobile-tab-btn .tab-icon {
-    font-size: 1rem;
+    font-size: 0.92rem;
+  }
+
+  .reactor-container {
+    padding: 4px 8px;
   }
 
   .reactor-wrapper {
-    height: 120px;
-    max-width: 160px;
+    height: 85px;
+    max-width: 130px;
   }
 
   .reactor-state-title {
-    font-size: 0.9rem;
+    font-size: 0.85rem;
+    letter-spacing: 1.5px;
+  }
+
+  .reactor-mode-label {
+    font-size: 0.52rem;
+  }
+
+  .wave-visualizer {
+    height: 10px;
+    width: 110px;
+    margin-top: 1px;
+  }
+
+  .card-header {
+    padding: 6px 10px;
+  }
+
+  .card-header h3 {
+    font-size: 0.72rem;
+  }
+
+  .card-body {
+    padding: 8px 10px;
   }
 
   .message-bubble {
     max-width: 95%;
+    padding: 6px 10px;
   }
 
   .msg-content {
     font-size: 0.84rem;
   }
 
+  .quick-chips {
+    padding: 4px 6px;
+    gap: 5px;
+  }
+
+  .chip-btn {
+    padding: 3px 8px;
+    font-size: 0.68rem;
+    min-height: 26px;
+  }
+
   .hud-input-bar {
-    padding: 6px 8px;
+    padding: 4px 6px;
+    gap: 5px;
   }
 
   .mic-btn, .send-btn {
-    width: 38px;
-    height: 38px;
+    width: 34px;
+    height: 34px;
   }
 
   .mic-btn svg {
-    width: 20px;
-    height: 20px;
+    width: 17px;
+    height: 17px;
   }
 
   .send-btn svg {
-    width: 18px;
-    height: 18px;
+    width: 16px;
+    height: 16px;
   }
 
   .input-wrapper input {
-    font-size: 0.85rem;
-    padding: 6px 10px;
-    min-height: 36px;
+    min-height: 34px;
+    font-size: 0.84rem;
+    padding: 4px 8px;
+  }
+
+  .launcher-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 5px;
+  }
+
+  .launch-btn {
+    padding: 6px 8px;
+    font-size: 0.78rem;
+    min-height: 34px;
+    gap: 6px;
+  }
+
+  .launch-btn .btn-icon {
+    font-size: 1rem;
+  }
+
+  .weather-main {
+    gap: 8px;
+  }
+
+  .temp-big {
+    font-size: 1.4rem;
+  }
+
+  .cond-text {
+    font-size: 0.84rem;
+  }
+
+  .hud-modal {
+    width: calc(100vw - 20px);
+    max-height: calc(100dvh - 24px);
+  }
+
+  .hud-segmented-group {
+    grid-template-columns: 1fr;
+    gap: 6px;
   }
 }
 
-/* ── Extra Narrow Phones (< 380px) ───────────────────────────────────────── */
-@media (max-width: 380px) {
+/* ── Extra Narrow Phones (< 360px) ───────────────────────────────────────── */
+@media (max-width: 360px) {
   .hud-status-badge .status-text {
     display: none;
   }
+
   .hud-status-badge {
-    padding: 5px;
+    padding: 4px;
     border-radius: 50%;
   }
+
+  .brand-title h1 {
+    font-size: 0.82rem;
+    letter-spacing: 0.5px;
+  }
+
   .mobile-tab-btn .tab-text {
-    font-size: 0.55rem;
+    font-size: 0.5rem;
+    letter-spacing: 0;
+  }
+
+  button.hud-btn.hud-btn-icon,
+  .hud-btn.hud-btn-icon,
+  .hud-btn-icon {
+    width: 30px !important;
+    height: 30px !important;
+    min-width: 30px !important;
+    min-height: 30px !important;
+    max-width: 30px !important;
+    max-height: 30px !important;
+    padding: 0 !important;
+  }
+
+  .hud-btn-icon svg,
+  .hud-btn-icon svg.icon {
+    width: 15px !important;
+    height: 15px !important;
+    min-width: 15px !important;
+    min-height: 15px !important;
+  }
+
+  .mic-btn, .send-btn {
+    width: 30px;
+    height: 30px;
+  }
+
+  .input-wrapper input {
+    font-size: 0.78rem;
+    padding: 4px 6px;
+  }
+}
+
+/* ── Landscape Mobile & Short Height Viewports ───────────────────────────── */
+@media (max-height: 540px) and (orientation: landscape) {
+  .hud-container {
+    padding: 4px 8px;
+    gap: 4px;
+  }
+
+  .hud-header {
+    min-height: 36px;
+    padding: 3px 8px;
+  }
+
+  .reactor-container {
+    display: none !important;
+  }
+
+  .hud-input-bar {
+    padding: 3px 6px;
+  }
+
+  .mic-btn, .send-btn {
+    width: 30px;
+    height: 30px;
+  }
+
+  .input-wrapper input {
+    min-height: 30px;
   }
 }
